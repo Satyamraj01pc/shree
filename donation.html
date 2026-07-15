@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Donation Portal | श्री कृष्ण जन्माष्टमी पूजा समिति</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+
+    <style>
+        /* ═══════════════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #081b3a, #123f85);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            background: #fff;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════════════ */
+        .header {
+            background: linear-gradient(90deg, #ff7b00, #ffb300);
+            padding: 28px 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            margin-top: 4px;
+            font-weight: 400;
+            opacity: 0.95;
+        }
+
+        .secure-badge {
+            display: inline-block;
+            margin-top: 12px;
+            background: #a84d7f;
+            padding: 6px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           CONTENT LAYOUT
+           ═══════════════════════════════════════════════════ */
+        .content {
+            padding: 30px 30px 20px;
+        }
+
+        .row-split {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .row-split .col-main {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .row-split .col-side {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           QR & UPI APPS
+           ═══════════════════════════════════════════════════ */
+        .qr {
+            display: block;
+            margin: 6px auto 14px;
+            width: 240px;
+            max-width: 100%;
+            background: #fff;
+            padding: 10px;
+            border-radius: 16px;
+            border: 4px solid #ff9800;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .upi-apps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .upi-apps span {
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .phonepe {
+            background: #5f259f;
+        }
+        .gpay {
+            background: #4285F4;
+        }
+        .paytm {
+            background: #00BAF2;
+        }
+        .bhim {
+            background: #ff9800;
+        }
+
+        .note-box {
+            background: #fff8db;
+            border-left: 5px solid #ff9800;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #3d2e00;
+            font-weight: 500;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           FORM STYLES
+           ═══════════════════════════════════════════════════ */
+        label {
+            display: block;
+            margin-top: 16px;
+            margin-bottom: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.3s;
+            background: #fafcff;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #ff9800;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.12);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .form-row>div {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .field-hint {
+            font-size: 11px;
+            color: #7a6a5a;
+            margin-top: 2px;
+        }
+
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            margin-top: 22px;
+            background: linear-gradient(90deg, #ff7b00, #ffb300);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(255, 152, 0, 0.35);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           VERIFY SECTION
+           ═══════════════════════════════════════════════════ */
+        .verify-box {
+            background: #f8f6f2;
+            border-radius: 16px;
+            padding: 22px 20px 24px;
+            border: 2px solid #e8e0d6;
+            margin-top: 8px;
+        }
+
+        .verify-box h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #b45309;
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+        }
+
+        .verify-box .verify-input {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .verify-box .verify-input input {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 14px;
+            border: 2px solid #d4c8b8;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .verify-box .verify-input input:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.1);
+        }
+
+        .verify-box .verify-input .verify-error {
+            color: #dc3545;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+            display: none;
+            width: 100%;
+        }
+
+        .verify-box .verify-input .verify-error.show {
+            display: block;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .btn-verify {
+            padding: 12px 28px;
+            background: #1a1a2e;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-verify:hover {
+            background: #2d2d4a;
+            transform: translateY(-1px);
+        }
+
+        .verify-result {
+            margin-top: 16px;
+            padding: 16px 18px;
+            border-radius: 12px;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .verify-result.success {
+            display: block;
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .verify-result.success .vr-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .verify-result.success .vr-title .badge {
+            background: #28a745;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .verify-result.success .vr-detail {
+            font-size: 13px;
+            margin-top: 6px;
+            line-height: 1.9;
+        }
+
+        .verify-result.success .vr-detail strong {
+            color: #0d3b1e;
+        }
+
+        .verify-result.success .vr-detail .vr-photo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 8px;
+        }
+
+        .verify-result.success .vr-detail .vr-photo-wrap img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid #28a745;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .verify-result.success .vr-detail .vr-photo-wrap .vr-name-big {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0d3b1e;
+        }
+
+        .verify-result.success .vr-detail .amount-words {
+            font-style: italic;
+            color: #2d5a2d;
+            font-weight: 500;
+            font-size: 12.5px;
+        }
+
+        .verify-result.error {
+            display: block;
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .verify-result.error .vr-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #721c24;
+        }
+
+        .verify-result.error .vr-detail {
+            font-size: 13px;
+            margin-top: 4px;
+            color: #721c24;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           DONOR LIST
+           ═══════════════════════════════════════════════════ */
+        .donor-list {
+            margin-top: 24px;
+        }
+
+        .donor-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #f5f5f7;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .donor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .donor-card .sno {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 14px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .donor-card img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff9800;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+
+        .donor-card .info {
+            flex: 1;
+        }
+        .donor-card .info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .donor-card .info p {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+        .donor-card .info .donor-date {
+            font-size: 11px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .gold {
+            border-left: 5px solid #ffd700;
+        }
+        .silver {
+            border-left: 5px solid #c0c0c0;
+        }
+        .bronze {
+            border-left: 5px solid #cd7f32;
+        }
+        .highlight-card {
+            background: #fff8e1 !important;
+            border-left: 5px solid #ff9800 !important;
+            box-shadow: 0 0 24px rgba(255, 152, 0, 0.20) !important;
+            transform: scale(1.02);
+            transition: 0.3s;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════════════ */
+        .footer {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 24px 20px;
+            text-align: center;
+            line-height: 2;
+            font-size: 13px;
+        }
+
+        .footer .message {
+            color: #ffcc00;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .footer a {
+            color: #ffb300;
+            text-decoration: none;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           RECEIPT — A5 with exact layout
+           ═══════════════════════════════════════════════════ */
+        #receipt-container {
+            display: none;
+            padding: 28px 16px 20px;
+            background: #e8e4de;
+            scroll-margin-top: 20px;
+        }
+
+        /* ─── SUCCESS MESSAGE ABOVE DOWNLOAD BUTTON ─── */
+        .receipt-success-msg {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #b7d8c4;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 0 0 18px 0;
+            text-align: center;
+            color: #155724;
+            font-size: 15px;
+            font-weight: 600;
+            animation: fadeUp 0.5s ease;
+        }
+
+        .receipt-success-msg.show {
+            display: block;
+        }
+
+        .receipt-success-msg .check-icon {
+            display: inline-block;
+            background: #28a745;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            margin-right: 12px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .receipt-success-msg .msg-text {
+            vertical-align: middle;
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .receipt-actions button {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-print {
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .btn-print:hover {
+            background: #2d2d4a;
+            transform: translateY(-2px);
+        }
+        .btn-pdf {
+            background: #c0392b;
+            color: #fff;
+        }
+        .btn-pdf:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+        }
+        .btn-back {
+            background: #7f8c8d;
+            color: #fff;
+        }
+        .btn-back:hover {
+            background: #95a5a6;
+            transform: translateY(-2px);
+        }
+
+        .receipt-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        /* ─── A5 RECEIPT ─── */
+        .receipt {
+            width: 148mm;
+            min-height: 210mm;
+            background: #fff;
+            padding: 8mm 10mm 8mm;
+            border-radius: 4px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+            border: 2px solid #d4a017;
+            position: relative;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: #1e1e2a;
+        }
+
+        .receipt::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700);
+            z-index: -1;
+            padding: 3px;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #d4a017;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .receipt-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .receipt-logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4a017;
+            background: #f5f0e8;
+            flex-shrink: 0;
+        }
+
+        .receipt-logo .logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #b45309;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-logo .logo-text small {
+            display: block;
+            font-size: 9.5px;
+            font-weight: 400;
+            color: #6b4f2e;
+            letter-spacing: 0.3px;
+        }
+
+        /* ─── Receipt Meta Row ─── */
+        .receipt-meta-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0 8px;
+            border-bottom: 1px dashed #d4c8b8;
+            font-size: 11px;
+            color: #4a3a2a;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+        }
+
+        .receipt-meta-row span strong {
+            color: #1a1a2e;
+        }
+
+        /* ─── Receipt Body ─── */
+        .receipt-body {
+            padding: 2px 0 8px;
+        }
+
+        .receipt-body .field-row {
+            display: flex;
+            padding: 3px 0;
+            align-items: baseline;
+            font-size: 11.5px;
+        }
+
+        .receipt-body .field-row .label {
+            width: 115px;
+            font-weight: 600;
+            color: #4a3a2a;
+            flex-shrink: 0;
+            font-size: 11.5px;
+        }
+
+        .receipt-body .field-row .value {
+            flex: 1;
+            color: #1a1a2e;
+            font-weight: 500;
+            word-break: break-word;
+            font-size: 11.5px;
+            border-bottom: 1px dotted #e0d8d0;
+            padding-bottom: 1px;
+        }
+
+        .receipt-body .field-row .value.no-line {
+            border-bottom: none;
+        }
+
+        .receipt-body .field-row-amount {
+            background: #fff5e6;
+            border-radius: 4px;
+            padding: 4px 10px;
+            margin: 4px 0;
+        }
+
+        .receipt-body .field-row-amount .label {
+            width: 115px;
+            font-weight: 700;
+            color: #b45309;
+            font-size: 12px;
+        }
+
+        .receipt-body .field-row-amount .value {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 15px;
+            border-bottom: none;
+        }
+
+        .receipt-body .field-row-words {
+            background: #faf6f0;
+            border-radius: 4px;
+            padding: 4px 10px;
+            margin: 4px 0;
+            border-left: 3px solid #d4a017;
+        }
+
+        .receipt-body .field-row-words .label {
+            width: 115px;
+            font-weight: 600;
+            color: #4a3a2a;
+            font-size: 11px;
+        }
+
+        .receipt-body .field-row-words .value {
+            font-weight: 500;
+            color: #2d2d3a;
+            font-size: 11.5px;
+            border-bottom: none;
+            font-style: italic;
+        }
+
+        /* ─── Thank You Message ─── */
+        .receipt-thankyou {
+            text-align: center;
+            padding: 10px 0 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #b45309;
+            border-top: 1px solid #f0e6d0;
+            border-bottom: 1px solid #f0e6d0;
+            margin: 8px 0 8px;
+        }
+
+        /* ─── Signature Section — No signature, just plain "Satyam" ─── */
+        .receipt-signature {
+            text-align: center;
+            padding: 6px 0 4px;
+        }
+
+        .receipt-signature .sig-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a3a2a;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-signature .sig-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000000;
+            letter-spacing: 0.5px;
+            margin: 2px 0 2px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .receipt-signature .sig-sub {
+            font-size: 9.5px;
+            color: #6b5a4a;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        /* ─── Footer ─── */
+        .receipt-footer {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f0e6d0;
+            font-size: 8.5px;
+            color: #7a6a5a;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .receipt-footer .downloaded-on {
+            font-weight: 500;
+            color: #4a3a2a;
+            font-size: 9px;
+        }
+        .receipt-footer .disclaimer {
+            font-style: italic;
+            font-size: 8px;
+            color: #8a7a6a;
+        }
+
+        .shri-krishna-ornament {
+            font-size: 18px;
+            text-align: center;
+            opacity: 0.08;
+            margin: -2px 0 -6px;
+            letter-spacing: 6px;
+            color: #b45309;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           PRINT STYLES
+           ═══════════════════════════════════════════════════ */
+        @media print {
+            body {
+                background: #fff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+            }
+            .header,
+            .footer,
+            .donor-list,
+            .qr,
+            .upi-apps,
+            .note-box,
+            .receipt-actions,
+            .receipt-success-msg,
+            #main-form-section,
+            .row-split .col-side {
+                display: none !important;
+            }
+            #receipt-container {
+                display: block !important;
+                padding: 0 !important;
+                background: #fff !important;
+            }
+            .receipt-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .receipt {
+                box-shadow: none !important;
+                border: 1.5px solid #d4a017 !important;
+                border-radius: 0 !important;
+                width: 148mm !important;
+                min-height: 210mm !important;
+                padding: 8mm 10mm 8mm !important;
+                margin: 0 auto !important;
+                font-size: 10.5px !important;
+            }
+            .receipt::before {
+                display: none !important;
+            }
+            .receipt-actions {
+                display: none !important;
+            }
+            .receipt-logo .logo-text {
+                font-size: 14px !important;
+            }
+            .receipt-logo .logo-text small {
+                font-size: 8.5px !important;
+            }
+            .receipt-signature .sig-name {
+                font-size: 13px !important;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 16px;
+            }
+            .row-split {
+                flex-direction: column;
+            }
+            .row-split .col-main,
+            .row-split .col-side {
+                min-width: unset;
+            }
+            .receipt {
+                width: 100% !important;
+                min-height: auto !important;
+                padding: 6mm 6mm 5mm !important;
+                border-radius: 6px !important;
+                font-size: 10.5px !important;
+            }
+            .receipt-body .field-row .label {
+                width: 90px !important;
+                font-size: 10px !important;
+            }
+            .receipt-body .field-row .value {
+                font-size: 10.5px !important;
+            }
+            .receipt-body .field-row-amount .label {
+                width: 90px !important;
+                font-size: 10.5px !important;
+            }
+            .receipt-body .field-row-amount .value {
+                font-size: 13px !important;
+            }
+            .receipt-body .field-row-words .label {
+                width: 90px !important;
+                font-size: 10px !important;
+            }
+            .receipt-body .field-row-words .value {
+                font-size: 10.5px !important;
+            }
+            .receipt-logo .logo-text {
+                font-size: 14px !important;
+            }
+            .receipt-logo .logo-text small {
+                font-size: 8px !important;
+            }
+            .receipt-logo img {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .receipt-actions button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .qr {
+                width: 180px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+            .verify-box .verify-input {
+                flex-direction: column;
+            }
+            .btn-verify {
+                width: 100%;
+                justify-content: center;
+            }
+            .donor-card .sno {
+                font-size: 12px;
+                min-width: 26px;
+            }
+            .donor-card img {
+                width: 40px;
+                height: 40px;
+            }
+            .receipt-meta-row {
+                font-size: 10px !important;
+            }
+            .receipt-success-msg {
+                font-size: 13px !important;
+                padding: 12px 16px !important;
+            }
+            .receipt-success-msg .check-icon {
+                width: 28px !important;
+                height: 28px !important;
+                line-height: 28px !important;
+                font-size: 15px !important;
+                margin-right: 10px !important;
+            }
+            .receipt-signature .sig-name {
+                font-size: 13px !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 18px;
+            }
+            .secure-badge {
+                font-size: 11px;
+                padding: 5px 14px;
+            }
+            .btn-submit {
+                font-size: 15px;
+                padding: 14px;
+            }
+            .receipt-logo .logo-text {
+                font-size: 12px !important;
+            }
+            .receipt-logo .logo-text small {
+                font-size: 7px !important;
+            }
+            .receipt-logo img {
+                width: 34px !important;
+                height: 34px !important;
+            }
+            .verify-result.success .vr-detail .vr-photo-wrap {
+                flex-wrap: wrap;
+            }
+            .donor-card .sno {
+                font-size: 11px;
+                min-width: 22px;
+            }
+            .donor-card img {
+                width: 36px;
+                height: 36px;
+            }
+            .receipt-body .field-row .label {
+                width: 75px !important;
+                font-size: 9.5px !important;
+            }
+            .receipt-body .field-row .value {
+                font-size: 10px !important;
+            }
+            .receipt-body .field-row-amount .label {
+                width: 75px !important;
+                font-size: 10px !important;
+            }
+            .receipt-body .field-row-amount .value {
+                font-size: 12px !important;
+            }
+            .receipt-body .field-row-words .label {
+                width: 75px !important;
+                font-size: 9.5px !important;
+            }
+            .receipt-body .field-row-words .value {
+                font-size: 10px !important;
+            }
+            .receipt-meta-row {
+                font-size: 9px !important;
+            }
+            .receipt-success-msg {
+                font-size: 12px !important;
+                padding: 10px 14px !important;
+            }
+            .receipt-success-msg .check-icon {
+                width: 24px !important;
+                height: 24px !important;
+                line-height: 24px !important;
+                font-size: 13px !important;
+                margin-right: 8px !important;
+            }
+            .receipt-signature .sig-name {
+                font-size: 12px !important;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           UTILITY
+           ═══════════════════════════════════════════════════ */
+        .success-msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 500;
+            border-left: 5px solid #28a745;
+            display: none;
+        }
+
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 500;
+            border-left: 5px solid #dc3545;
+            display: none;
+        }
+
+        .pdf-loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .pdf-loading .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #ffb300;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        .pdf-loading.show {
+            display: flex;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+        .text-center {
+            text-align: center;
+        }
+
+        .empty-donors {
+            text-align: center;
+            color: #aaa;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+        .toast.success {
+            background: #28a745;
+        }
+        .toast.error {
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- PDF Loading Overlay -->
+    <div class="pdf-loading" id="pdfLoading">
+        <div class="spinner"></div>
+        <span>⏳ Receipt PDF तैयार हो रहा है...</span>
+    </div>
+
+    <div class="container" id="appContainer">
+
+        <!-- ═══ HEADER ═══ -->
+        <div class="header">
+            <h1>🌺 श्री कृष्ण जन्माष्टमी पूजा समिति 🌺</h1>
+            <p>भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)</p>
+            <div class="secure-badge">🔒 Secure Donation Portal</div>
+        </div>
+
+        <!-- ═══ CONTENT ═══ -->
+        <div class="content" id="mainContent">
+
+            <div class="row-split">
+
+                <!-- ─── MAIN COLUMN ─── -->
+                <div class="col-main">
+
+                    <!-- QR Code -->
+                    <img src="imagesqr.png" class="qr" alt="Donation QR" />
+
+                    <!-- UPI Apps -->
+                    <div class="upi-apps">
+                        <span class="phonepe">PhonePe</span>
+                        <span class="gpay">Google Pay</span>
+                        <span class="paytm">Paytm</span>
+                        <span class="bhim">BHIM UPI</span>
+                    </div>
+
+                    <!-- Note Box -->
+                    <div class="note-box">
+                        पहले QR Code स्कैन करके भुगतान करें, फिर नीचे अपनी जानकारी भरें। भुगतान करने के बाद Payment History में जाकर UPI Reference Number कॉपी करें और नीचे दर्ज करें।
+                    </div>
+
+                    <!-- ─── FORM ─── -->
+                    <div id="main-form-section">
+                        <div id="formSuccessMsg" class="success-msg"></div>
+                        <div id="formErrorMsg" class="error-msg">❌ Something Wrong कृपया पुनः प्रयास करें।</div>
+
+                        <form id="donationForm" novalidate>
+                            <input type="hidden" name="access_key" value="3e53d31a-caa7-4d87-8337-a775f73e8d7b" />
+
+                            <div class="form-row">
+                                <div>
+                                    <label>पूरा नाम *</label>
+                                    <input type="text" id="fullNameInput" name="Full Name" placeholder="पूरा नाम दर्ज करें" maxlength="18" required />
+                                    <div class="field-error" id="nameError">❌ नाम में केवल 4 से 18 अक्षर होने चाहिए।</div>
+                                </div>
+                                <div>
+                                    <label>मोबाइल नंबर *</label>
+                                    <input type="tel" id="mobileInput" name="Mobile Number" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" required />
+                                    <div class="field-error" id="mobileError">❌ मोबाइल नंबर 10 अंक का ही डालें।</div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <label>दान राशि (₹) *</label>
+                                    <input type="number" id="amountInput" name="Donation Amount" placeholder="₹ 0" min="1" max="9999" required />
+                                    <div class="field-error" id="amountError">❌ दान राशि ₹1 से ₹9999 के बीच होनी चाहिए।</div>
+                                </div>
+                                <div>
+                                    <label>UPI Reference Number *</label>
+                                    <input type="text" id="upiInput" name="UPI Reference Number" placeholder="Enter UPI Reference Number" minlength="10" maxlength="16" pattern="[0-9]{10,16}" inputmode="numeric" autocomplete="off" required />
+                                    <div class="field-hint"></div>
+                                    <div class="field-error" id="upiError">❌ UPI Reference Number 12 अंकों का दर्ज करें।</div>
+                                </div>
+                            </div>
+                            
+                            <label>पता *</label>
+                            <textarea name="Full Address" rows="3" placeholder="पूरा पता दर्ज करें" required></textarea>
+                            
+                            <label>नोट (Optional)</label>
+                            <textarea name="Note" rows="2" placeholder="अपना संदेश लिखें"></textarea>
+
+                            <button type="submit" class="btn-submit" id="submitBtn">
+                                ✅ DONATE
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- ─── DONOR LIST ─── -->
+                    <div class="mt-20">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+                            <h2 style="color:#ff7b00;font-size:20px;">🏆 प्रमुख दानदाता 2026</h2>
+                            <span style="font-size:12px;color:#999;background:#f5f5f7;padding:4px 14px;border-radius:20px;" id="donorCount">0 दानदाता</span>
+                        </div>
+                        <div class="donor-list" id="donorList">
+                            <div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ─── SIDE COLUMN — VERIFY ─── -->
+                <div class="col-side">
+                    <div class="verify-box">
+                        <h3>🔍 VERIFY DONATION</h3>
+                        <p style="font-size:13px;color:#5a4a3a;margin-bottom:12px;text-align:center;">
+                            Enter UPI Reference Number to verify
+                        </p>
+                        <div class="verify-input">
+                            <div style="flex:1;min-width:140px;position:relative;">
+                                <input type="text" id="verifyInput" placeholder="Enter UPI Reference Number" minlength="10" maxlength="16" pattern="[0-9]{10,16}" inputmode="numeric" autocomplete="off" />
+                                <div class="verify-error" id="verifyError">❌ UPI Reference Number 12 अंकों का दर्ज करें।</div>
+                            </div>
+                            <button class="btn-verify" id="verifyBtn">🔍 VERIFY</button>
+                        </div>
+                        <div class="verify-result" id="verifyResult"></div>
+                    </div>
+
+                    <div style="margin-top:12px;font-size:12px;color:#8a7a6a;text-align:center;background:#f5f0ea;padding:8px;border-radius:8px;">
+                        💡 Try: <strong style="color:#b45309;cursor:pointer;" onclick="document.getElementById('verifyInput').value='784512846445';document.getElementById('verifyBtn').click();">784512846445</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══ RECEIPT CONTAINER ═══ -->
+        <div id="receipt-container">
+            <!-- ─── SUCCESS MESSAGE ABOVE DOWNLOAD BUTTON ─── -->
+            <div class="receipt-success-msg" id="receiptSuccessMsg">
+                <span class="check-icon">✔</span>
+                <span class="msg-text">✅ आपका दान सफलतापूर्वक दर्ज हो गया। कृपया receipt Download करें।</span>
+            </div>
+
+            <div class="receipt-actions">
+                <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+                <button class="btn-pdf" id="downloadPdfBtn">📄 Download Receipt</button>
+                <button class="btn-back" onclick="goBackToForm()">⬅️ Back to Form</button>
+            </div>
+
+            <div class="receipt-wrapper">
+                <div class="receipt" id="receiptContent"></div>
+            </div>
+        </div>
+
+        <!-- ═══ FOOTER ═══ -->
+        <div class="footer">
+            <div class="message">🌺 100% दान राशि धार्मिक एवं सामाजिक कार्यों हेतु उपयोग की जाएगी 🌺</div>
+            📞 जानकारी Submit करने से पहले अपनी जानकारी एक बार फिर जाँच लें।
+            <br />
+            ✉️ <a href="mailto:satyamraj0017@gmail.com">satyamraj0017@gmail.com</a>
+            <br />
+            📍 भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)
+        </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- ═══ DONOR DATABASE — Edit donor records only here ═══ -->
+
+    <script>
+        // ================================================================
+        // ===== DONOR DATABASE ============================================
+        // ================================================================
+        // To add a new donor: copy the object format below and paste it
+        // inside the donors array (between the square brackets).
+        //
+        // To edit: change any value inside an existing object.
+        // To delete: remove the entire object (including the { ... } and comma).
+        //
+        // Required fields: fullName, mobile, address, amount, upiReference,
+        // donationDate, receiptNumber
+        //
+        // You can organise donors by year using comments like:
+        // // ===== 2026 DONORS =====
+        // // ===== 2027 DONORS =====
+        // etc.
+        // ================================================================
+
+        const donors = [
+            // ===== 2026 DONORS =====
+            {
+                fullName: "Doner Name",
+                mobile: "NA",
+                address: "NA",
+                amount: 0,
+                upiReference: "NA",
+                donationDate: "NA",
+                receiptNumber: "NA"
+            }, {
+                fullName: "Doner Name",
+                mobile: "NA",
+                address: "NA",
+                amount: 0,
+                upiReference: "NA",
+                donationDate: "NA",
+                receiptNumber: "NA"
+            }, {
+                fullName: "Doner Name",
+                mobile: "NA",
+                address: "NA",
+                amount: 0,
+                upiReference: "NA",
+                donationDate: "NA",
+                receiptNumber: "NA"
+            }, 
+        ];
+
+        // ================================================================
+        // ===== END OF DONOR DATABASE ====================================
+        // ================================================================
+
+
+        /* ═══════════════════════════════════════════════════════════════════
+           HELPERS & UTILITIES
+           ═══════════════════════════════════════════════════════════════════ */
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function numberToWords(num) {
+            if (num === 0) return 'Zero Rupees Only';
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
+                'Nineteen'
+            ];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+            function convert(n) {
+                if (n === 0) return '';
+                let w = '';
+                if (n >= 10000000) { w += convert(Math.floor(n / 10000000)) + ' Crore ';
+                    n %= 10000000; }
+                if (n >= 100000) { w += convert(Math.floor(n / 100000)) + ' Lakh ';
+                    n %= 100000; }
+                if (n >= 1000) { w += convert(Math.floor(n / 1000)) + ' Thousand ';
+                    n %= 1000; }
+                if (n >= 100) { w += convert(Math.floor(n / 100)) + ' Hundred ';
+                    n %= 100; }
+                if (n >= 20) { w += tens[Math.floor(n / 10)] + ' ';
+                    n %= 10; } else if (n >= 10) { w += teens[n - 10] + ' ';
+                    n = 0; }
+                if (n > 0) { w += ones[n] + ' '; }
+                return w.trim();
+            }
+            const words = convert(Math.floor(num));
+            return words ? words.trim() + ' Rupees Only' : 'Zero Rupees Only';
+        }
+
+        function generateReceiptNumber() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            const sec = String(d.getSeconds()).padStart(2, '0');
+            return `SKJPS-${y}${m}${day}-${h}${min}${sec}`;
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function formatDateTime(date) {
+            return new Date(date).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           VALIDATION FUNCTIONS
+           ═══════════════════════════════════════════════════════════════════ */
+
+        // ─── Full Name: Only letters and spaces, 4-18 chars ───
+        function validateName(value) {
+            return /^[A-Za-z\s]{4,18}$/.test(value.trim());
+        }
+
+        function filterName(value) {
+            return value.replace(/[^A-Za-z\s]/g, '');
+        }
+
+        function showFieldError(input, errorEl, show) {
+            if (show) {
+                errorEl.classList.add('show');
+                input.style.borderColor = '#dc3545';
+                input.style.boxShadow = '0 0 0 4px rgba(220,53,69,0.12)';
+            } else {
+                errorEl.classList.remove('show');
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+            }
+        }
+
+        // ─── Mobile: Only digits, exactly 10 ───
+        function validateMobile(value) {
+            return /^[0-9]{10}$/.test(value.trim());
+        }
+
+        function filterMobile(value) {
+            return value.replace(/[^0-9]/g, '').slice(0, 10);
+        }
+
+        // ─── Amount: Only digits, 1-9999 ───
+        function validateAmount(value) {
+            const num = parseInt(value);
+            return !isNaN(num) && num >= 1 && num <= 9999 && /^[0-9]+$/.test(value.trim());
+        }
+
+        function filterAmount(value) {
+            return value.replace(/[^0-9]/g, '');
+        }
+
+        // ─── UPI: Only digits, 10-16 ───
+        function validateUpi(value) {
+            return /^[0-9]{10,16}$/.test(value.trim());
+        }
+
+        function filterUpi(value) {
+            return value.replace(/[^0-9]/g, '').slice(0, 16);
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════
+           FIND DONOR BY UPI REFERENCE (reads from the donors array)
+           ═══════════════════════════════════════════════════════════════════ */
+        function findDonorByUpi(upiRef) {
+            const key = upiRef.trim();
+            return donors.find(d => d.upiReference === key || d.upiReference.toLowerCase() === key.toLowerCase()) || null;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           BUILD RECEIPT HTML — No signature, "Satyam" as plain text in Verified By
+           ═══════════════════════════════════════════════════════════════════ */
+        function buildReceipt(data) {
+            const now = new Date();
+            const receiptNo = data.receiptNumber || generateReceiptNumber();
+            const donationDate = data.donationDate || formatDate(now);
+            const downloadedOn = formatDateTime(now);
+            const amount = parseFloat(data.amount) || 0;
+            const amountWords = numberToWords(amount);
+
+            return `
+            <!-- ─── HEADER ─── -->
+            <div class="receipt-header">
+              <div class="receipt-logo">
+                <img src="logo.png" alt="Logo" />
+                <div class="logo-text">
+                  SHREE KRISHNA JANMASHTAMI PUJA SAMITI
+                  <small>Bhadir, Muhammadabad Gohana, Mau (U.P.)</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- ─── META ROW ─── -->
+            <div class="receipt-meta-row">
+              <span><strong>Receipt No.</strong> ${receiptNo}</span>
+              <span><strong>Donation Date</strong> ${donationDate}</span>
+            </div>
+
+            <!-- ─── BODY ─── -->
+            <div class="receipt-body">
+              <div class="field-row">
+                <span class="label"> Doner Name</span>
+                <span class="value">${escapeHtml(data.fullName)}</span>
+              </div>
+              <div class="field-row">
+                <span class="label">Mobile Number</span>
+                <span class="value">${escapeHtml(data.mobile)}</span>
+              </div>
+              <div class="field-row">
+                <span class="label">Address</span>
+                <span class="value">${escapeHtml(data.address)}</span>
+              </div>
+
+              <div class="field-row field-row-amount">
+                <span class="label">Donation Amount</span>
+                <span class="value">₹ ${amount.toLocaleString('en-IN')}</span>
+              </div>
+
+              <div class="field-row field-row-words">
+                <span class="label">Amount in Words</span>
+                <span class="value">${amountWords}</span>
+              </div>
+
+              <div class="field-row">
+                <span class="label">UPI Reference No.</span>
+                <span class="value">${escapeHtml(data.upiReference)}</span>
+              </div>
+            </div>
+
+            <!-- ─── THANK YOU ─── -->
+            <div class="receipt-thankyou">
+              🙏 Thank you for your valuable contribution to<br />
+              Shree Krishna Janmashtami Puja Samiti.
+            </div>
+
+
+            <!-- ─── SIGNATURE SECTION — No signature, plain "Satyam" text ─── -->
+            <div class="receipt-signature">
+              <div class="sig-label">Verified By</div>
+
+              <div class="sig-name">Satyam</div>
+              <div class="sig-sub">(Shree Krishna Janmashtami Puja Samiti)<br />Committee Administrator</div>
+            </div>
+
+            <!-- ─── FOOTER ─── -->
+            <div class="receipt-footer">
+              <div class="downloaded-on">📥 Downloaded On : ${downloadedOn}</div>
+              <div class="disclaimer">This receipt is computer generated and does not require a physical signature.</div>
+            </div>
+
+            <div class="shri-krishna-ornament">🕉️ ॐ 🕉️</div>
+          `;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           RENDER DONOR LIST — shows only: S.No, Name, Amount, Date (no UPI)
+           ═══════════════════════════════════════════════════════════════════ */
+        function renderDonorList(searchRef) {
+            const list = document.getElementById('donorList');
+            const countEl = document.getElementById('donorCount');
+
+            if (donors.length === 0) {
+                list.innerHTML = '<div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div>';
+                countEl.textContent = '0 दानदाता';
+                return;
+            }
+
+            // Sort by date (newest first)
+            let sorted = [...donors].sort((a, b) => {
+                const dateA = new Date(a.donationDate);
+                const dateB = new Date(b.donationDate);
+                return dateB - dateA;
+            });
+
+            if (searchRef) {
+                const idx = sorted.findIndex(d =>
+                    d.upiReference === searchRef || d.upiReference.toLowerCase() === searchRef.toLowerCase()
+                );
+                if (idx !== -1) {
+                    const [item] = sorted.splice(idx, 1);
+                    sorted.unshift(item);
+                }
+            }
+
+            const medals = ['🥇', '🥈', '🥉'];
+            let html = '';
+            sorted.slice(0, 20).forEach((d, i) => {
+                const medal = i < 3 ? medals[i] : '';
+                const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const highlight = (searchRef && d.upiReference === searchRef) ? 'highlight-card' : '';
+                const amt = parseFloat(d.amount).toLocaleString('en-IN');
+                const date = d.donationDate || formatDate(new Date());
+                const avatarUrl =
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(d.fullName)}&background=f5b042&color=fff&size=64&bold=true`;
+
+                html += `
+              <div class="donor-card ${cls} ${highlight}">
+                <span class="sno">#${i + 1}</span>
+                <img src="${avatarUrl}" alt="${escapeHtml(d.fullName)}" />
+                <div class="info">
+                  <h3>${medal} ${escapeHtml(d.fullName)}</h3>
+                  <p>₹ ${amt}</p>
+                  <div class="donor-date">📅 ${date}</div>
+                </div>
+              </div>
+            `;
+            });
+
+            list.innerHTML = html;
+            countEl.textContent = `${donors.length} दानदाता`;
+
+            if (searchRef) {
+                setTimeout(() => {
+                    const highlighted = list.querySelector('.highlight-card');
+                    if (highlighted) {
+                        highlighted.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 200);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           VERIFY DONATION — searches ONLY by UPI Reference Number
+           ═══════════════════════════════════════════════════════════════════ */
+        document.getElementById('verifyBtn').addEventListener('click', function() {
+            const input = document.getElementById('verifyInput');
+            const ref = input.value.trim();
+            const resultDiv = document.getElementById('verifyResult');
+            const errorEl = document.getElementById('verifyError');
+
+            // Hide receipt container
+            document.getElementById('receipt-container').style.display = 'none';
+
+            // Validate UPI format
+            if (!validateUpi(ref)) {
+                showFieldError(input, errorEl, true);
+                resultDiv.className = 'verify-result';
+                resultDiv.style.display = 'none';
+                renderDonorList(null);
+                return;
+            } else {
+                showFieldError(input, errorEl, false);
+            }
+
+            const donor = findDonorByUpi(ref);
+
+            if (donor) {
+                const amt = parseFloat(donor.amount).toLocaleString('en-IN');
+                const words = numberToWords(parseFloat(donor.amount));
+                const date = donor.donationDate || formatDate(new Date());
+                const avatarUrl =
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(donor.fullName)}&background=28a745&color=fff&size=80&bold=true`;
+
+                resultDiv.className = 'verify-result success';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+              <div class="vr-title">
+                ✅ Donation Verified
+                <span class="badge">VERIFIED</span>
+              </div>
+              <div class="vr-detail">
+                <div class="vr-photo-wrap">
+                  <img src="${avatarUrl}" alt="${escapeHtml(donor.fullName)}" />
+                  <span class="vr-name-big">${escapeHtml(donor.fullName)}</span>
+                </div>
+                <strong>Mobile Number :</strong> ${escapeHtml(donor.mobile)}<br />
+                <strong>Address :</strong> ${escapeHtml(donor.address)}<br />
+                <strong>Donation Amount :</strong> ₹${amt}<br />
+                <strong>Amount in Words :</strong> <span class="amount-words">${words}</span><br />
+                <strong>Donation Date :</strong> ${date}<br />
+                <strong>UPI Reference :</strong> ${escapeHtml(donor.upiReference)}<br />
+                <strong>Status :</strong> VERIFIED ✅
+              </div>
+            `;
+
+                renderDonorList(ref);
+
+            } else {
+                resultDiv.className = 'verify-result error';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `
+              <div class="vr-title">❌ Donation Not Found</div>
+              <div class="vr-detail">No donor record found with this UPI Reference Number.</div>
+            `;
+                renderDonorList(null);
+            }
+        });
+
+        document.getElementById('verifyInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('verifyBtn').click();
+            }
+        });
+
+        // Real-time validation for verify input
+        document.getElementById('verifyInput').addEventListener('input', function() {
+            const val = this.value;
+            const errorEl = document.getElementById('verifyError');
+            // Filter non-digits
+            const filtered = filterUpi(val);
+            if (filtered !== val) {
+                this.value = filtered;
+            }
+            if (filtered.length > 0 && !validateUpi(filtered)) {
+                showFieldError(this, errorEl, true);
+            } else {
+                showFieldError(this, errorEl, false);
+            }
+        });
+
+        /* ═══════════════════════════════════════════════════════════════════
+           FORM VALIDATION — Full Name, Mobile, Amount, UPI
+           ═══════════════════════════════════════════════════════════════════ */
+
+        // ─── Full Name ───
+        const nameInput = document.getElementById('fullNameInput');
+        const nameError = document.getElementById('nameError');
+
+        nameInput.addEventListener('input', function() {
+            const val = this.value;
+            // Filter: only letters and spaces
+            const filtered = filterName(val);
+            if (filtered !== val) {
+                this.value = filtered;
+            }
+            // Validate
+            if (filtered.length > 0 && !validateName(filtered)) {
+                showFieldError(this, nameError, true);
+            } else {
+                showFieldError(this, nameError, false);
+            }
+        });
+
+        nameInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            if (val.length > 0 && !validateName(val)) {
+                showFieldError(this, nameError, true);
+            } else if (val.length === 0) {
+                showFieldError(this, nameError, false);
+            } else {
+                showFieldError(this, nameError, false);
+            }
+        });
+
+        nameInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = filterName(pasted);
+            this.value = filtered;
+            if (filtered.length > 0 && !validateName(filtered)) {
+                showFieldError(this, nameError, true);
+            } else {
+                showFieldError(this, nameError, false);
+            }
+        });
+
+        // ─── Mobile Number ───
+        const mobileInput = document.getElementById('mobileInput');
+        const mobileError = document.getElementById('mobileError');
+
+        mobileInput.addEventListener('input', function() {
+            const val = this.value;
+            const filtered = filterMobile(val);
+            if (filtered !== val) {
+                this.value = filtered;
+            }
+            if (filtered.length > 0 && !validateMobile(filtered)) {
+                showFieldError(this, mobileError, true);
+            } else {
+                showFieldError(this, mobileError, false);
+            }
+        });
+
+        mobileInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            if (val.length > 0 && !validateMobile(val)) {
+                showFieldError(this, mobileError, true);
+            } else if (val.length === 0) {
+                showFieldError(this, mobileError, false);
+            } else {
+                showFieldError(this, mobileError, false);
+            }
+        });
+
+        mobileInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = filterMobile(pasted);
+            this.value = filtered;
+            if (filtered.length > 0 && !validateMobile(filtered)) {
+                showFieldError(this, mobileError, true);
+            } else {
+                showFieldError(this, mobileError, false);
+            }
+        });
+
+        // ─── Donation Amount ───
+        const amountInput = document.getElementById('amountInput');
+        const amountError = document.getElementById('amountError');
+
+        amountInput.addEventListener('input', function() {
+            const val = this.value;
+            const filtered = filterAmount(val);
+            if (filtered !== val) {
+                this.value = filtered;
+            }
+            // Check max value
+            const num = parseInt(filtered);
+            if (filtered.length > 0 && !validateAmount(filtered)) {
+                showFieldError(this, amountError, true);
+            } else {
+                showFieldError(this, amountError, false);
+            }
+            // Prevent > 9999 while typing
+            if (num > 9999) {
+                this.value = '9999';
+                showFieldError(this, amountError, true);
+            }
+        });
+
+        amountInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            if (val.length > 0 && !validateAmount(val)) {
+                showFieldError(this, amountError, true);
+            } else if (val.length === 0) {
+                showFieldError(this, amountError, false);
+            } else {
+                showFieldError(this, amountError, false);
+            }
+        });
+
+        amountInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = filterAmount(pasted);
+            // Cap at 9999
+            const num = parseInt(filtered);
+            this.value = (num > 9999) ? '9999' : filtered;
+            if (this.value.length > 0 && !validateAmount(this.value)) {
+                showFieldError(this, amountError, true);
+            } else {
+                showFieldError(this, amountError, false);
+            }
+        });
+
+        // ─── UPI Reference Number ───
+        const upiInput = document.getElementById('upiInput');
+        const upiError = document.getElementById('upiError');
+
+        upiInput.addEventListener('input', function() {
+            const val = this.value;
+            const filtered = filterUpi(val);
+            if (filtered !== val) {
+                this.value = filtered;
+            }
+            if (filtered.length > 0 && !validateUpi(filtered)) {
+                showFieldError(this, upiError, true);
+            } else {
+                showFieldError(this, upiError, false);
+            }
+        });
+
+        upiInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            if (val.length > 0 && !validateUpi(val)) {
+                showFieldError(this, upiError, true);
+            } else if (val.length === 0) {
+                showFieldError(this, upiError, false);
+            } else {
+                showFieldError(this, upiError, false);
+            }
+        });
+
+        upiInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text');
+            const filtered = filterUpi(pasted);
+            this.value = filtered;
+            if (filtered.length > 0 && !validateUpi(filtered)) {
+                showFieldError(this, upiError, true);
+            } else {
+                showFieldError(this, upiError, false);
+            }
+        });
+
+
+        /* ═══════════════════════════════════════════════════════════════════
+           FORM SUBMISSION — sends email via Web3Forms (no storage)
+           ═══════════════════════════════════════════════════════════════════ */
+        const form = document.getElementById('donationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMsg = document.getElementById('formSuccessMsg');
+        const errorMsg = document.getElementById('formErrorMsg');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            // Get all values
+            const name = nameInput.value.trim();
+            const phone = mobileInput.value.trim();
+            const address = form.querySelector('textarea[name="Full Address"]').value.trim();
+            const amount = amountInput.value.trim();
+            const upi = upiInput.value.trim();
+            const note = form.querySelector('textarea[name="Note"]').value.trim();
+
+            // ─── Validate all fields ───
+            let hasError = false;
+
+            // Full Name
+            if (!validateName(name)) {
+                showFieldError(nameInput, nameError, true);
+                hasError = true;
+            } else {
+                showFieldError(nameInput, nameError, false);
+            }
+
+            // Mobile
+            if (!validateMobile(phone)) {
+                showFieldError(mobileInput, mobileError, true);
+                hasError = true;
+            } else {
+                showFieldError(mobileInput, mobileError, false);
+            }
+
+            // Address
+            if (!address) {
+                errorMsg.textContent = '❌ कृपया पता दर्ज करें।';
+                errorMsg.style.display = 'block';
+                hasError = true;
+            }
+
+            // Amount
+            if (!validateAmount(amount)) {
+                showFieldError(amountInput, amountError, true);
+                hasError = true;
+            } else {
+                showFieldError(amountInput, amountError, false);
+            }
+
+            // UPI
+            if (!validateUpi(upi)) {
+                showFieldError(upiInput, upiError, true);
+                hasError = true;
+            } else {
+                showFieldError(upiInput, upiError, false);
+            }
+
+            if (hasError) {
+                // Scroll to the first error
+                const firstError = document.querySelector('.field-error.show');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            // Check if this UPI already exists (just a friendly warning)
+            const existing = findDonorByUpi(upi);
+            if (existing) {
+                if (!confirm(`⚠️ यह UPI Reference Number (${upi}) पहले से दर्ज है।\nदानदाता: ${existing.fullName}\nक्या आप फिर भी आगे बढ़ना चाहते हैं?`)) {
+                    return;
+                }
+            }
+
+            const payload = {
+                access_key: '3e53d31a-caa7-4d87-8337-a775f73e8d7b',
+                'Full Name': name,
+                'Mobile Number': phone,
+                'Full Address': address,
+                'Donation Amount': amount,
+                'UPI Reference Number': upi,
+                'Note': note || '—'
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loader"></span> Submitting...';
+
+            try {
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    successMsg.style.display = 'block';
+                    
+
+                    // Build receipt data (for display/download only)
+                    const receiptData = {
+                        fullName: name,
+                        mobile: phone,
+                        address: address,
+                        amount: amount,
+                        upiReference: upi,
+                        donationDate: formatDate(new Date()),
+                        receiptNumber: generateReceiptNumber()
+                    };
+
+                    setTimeout(() => {
+                        showReceipt(receiptData);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '✅ DONATE';
+                        renderDonorList();
+                    }, 600);
+
+                } else {
+                    errorMsg.textContent = '❌ ' + (result.message || 'Something Wrong कृपया पुनः प्रयास करें।');
+                    errorMsg.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '✅ DONATE';
+                }
+            } catch (err) {
+                errorMsg.textContent = '❌ Network Error कृपया पुनः प्रयास करें।';
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '✅ DONATE';
+                console.error('Submission error:', err);
+            }
+        });
+
+        /* ═══════════════════════════════════════════════════════════════════
+           SHOW RECEIPT (for download/print)
+           ═══════════════════════════════════════════════════════════════════ */
+        function showReceipt(data) {
+            const container = document.getElementById('receipt-container');
+            const receiptEl = document.getElementById('receiptContent');
+            const successMsgEl = document.getElementById('receiptSuccessMsg');
+
+            // Show success message above the Download button
+            successMsgEl.classList.add('show');
+
+            receiptEl.innerHTML = buildReceipt(data);
+            container.style.display = 'block';
+
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+
+            window._receiptData = data;
+        }
+
+        function goBackToForm() {
+            document.getElementById('receipt-container').style.display = 'none';
+            // Hide success message when going back
+            document.getElementById('receiptSuccessMsg').classList.remove('show');
+            document.getElementById('main-form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           PDF DOWNLOAD
+           ═══════════════════════════════════════════════════════════════════ */
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const btn = this;
+            const loading = document.getElementById('pdfLoading');
+            const receiptEl = document.getElementById('receiptContent');
+
+            loading.classList.add('show');
+            btn.textContent = '⏳ Generating...';
+            btn.disabled = true;
+
+            setTimeout(function() {
+                const clone = receiptEl.cloneNode(true);
+
+                clone.style.width = '148mm';
+                clone.style.minHeight = '210mm';
+                clone.style.padding = '8mm 10mm 8mm';
+                clone.style.margin = '0';
+                clone.style.borderRadius = '0';
+                clone.style.boxShadow = 'none';
+                clone.style.background = '#fff';
+                clone.style.border = '1.5px solid #d4a017';
+                clone.style.fontSize = '11.5px';
+                clone.style.lineHeight = '1.6';
+                clone.style.color = '#1e1e2a';
+                clone.style.display = 'block';
+                clone.id = 'cloneForPdf';
+
+                document.body.appendChild(clone);
+
+                setTimeout(() => {
+                    html2canvas(clone, {
+                        scale: 2.8,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        width: 560,
+                        height: 793,
+                    }).then(function(canvasImg) {
+                        document.body.removeChild(clone);
+                        const imgData = canvasImg.toDataURL('image/jpeg', 0.95);
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'a5',
+                            compress: true
+                        });
+                        const pdfWidth = 148;
+                        const pdfHeight = (canvasImg.height * pdfWidth) / canvasImg.width;
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                        pdf.save('Donation_Receipt_A5.pdf');
+
+                        loading.classList.remove('show');
+                        btn.textContent = '📄 Download Receipt';
+                        btn.disabled = false;
+                    }).catch(function(err) {
+                        console.error('html2canvas error:', err);
+                        document.body.removeChild(clone);
+                        loading.classList.remove('show');
+                        btn.textContent = '📄 Download Receipt';
+                        btn.disabled = false;
+                        alert('PDF generation failed. Please use Print → Save as PDF.');
+                    });
+                }, 400);
+            }, 300);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                const container = document.getElementById('receipt-container');
+                if (container.style.display === 'block') {}
+            }
+        });
+
+        /* ═══════════════════════════════════════════════════════════════════
+           INIT — render donor list from the database
+           ═══════════════════════════════════════════════════════════════════ */
+        renderDonorList();
+
+        console.log('🕉️ श्री कृष्ण जन्माष्टमी पूजा समिति – Donation Portal');
+        console.log('📋 Donor Database loaded with ' + donors.length + ' records.');
+        console.log('🔍 Verification searches ONLY the donors array (read-only).');
+        console.log('✉️ Web3Forms sends email — no data is stored in browser.');
+        console.log('📄 No signature on receipt. "Satyam" as plain text in Verified By.');
+        console.log('🔢 UPI field accepts only 10-16 digits (0-9).');
+        console.log('✅ Improved validation for Name, Mobile, Amount, and UPI.');
+        console.log('🙏 Jai Shree Krishna');
+    </script>
+
+</body>
+</html>
