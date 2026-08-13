@@ -799,35 +799,49 @@
             margin: 8px 0 8px;
         }
 
-        /* ─── Signature Section — No signature, just plain "Satyam" ─── */
-        .receipt-signature {
-            text-align: center;
-            padding: 6px 0 4px;
-        }
+      /* ─── Signature + Seal Section ─── */
+.receipt-signature {
+    text-align: center;
+    padding: 6px 0 4px;
+}
 
-        .receipt-signature .sig-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #4a3a2a;
-            letter-spacing: 0.5px;
-        }
+.receipt-signature .sig-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a3a2a;
+    letter-spacing: 0.5px;
+}
 
-        .receipt-signature .sig-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: #000000;
-            letter-spacing: 0.5px;
-            margin: 2px 0 2px;
-            font-family: 'Poppins', sans-serif;
-        }
+.receipt-signature .sig-sub {
+    font-size: 9.5px;
+    color: #6b5a4a;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-top: 2px;
+}
 
-        .receipt-signature .sig-sub {
-            font-size: 9.5px;
-            color: #6b5a4a;
-            font-weight: 400;
-            line-height: 1.4;
-        }
+/* Signature + Seal */
+.signature-seal-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
 
+.signature-seal-row .sig-image {
+    width: 82px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.signature-seal-row .seal-image {
+    width: 58px;
+    height: 58px;
+    display: block;
+    object-fit: contain;
+}
         /* ─── Footer ─── */
         .receipt-footer {
             margin-top: 8px;
@@ -1594,13 +1608,33 @@
             </div>
 
 
-            <!-- ─── SIGNATURE SECTION — No signature, plain "Satyam" text ─── -->
-            <div class="receipt-signature">
-              <div class="sig-label">Verified By</div>
+            <!-- ─── SIGNATURE + SEAL SECTION ─── -->
+<div class="receipt-signature">
 
-              <div class="sig-name">Satyam</div>
-              <div class="sig-sub">(Shree Krishna Janmashtami Puja Samiti)<br />Committee Administrator</div>
-            </div>
+  <div class="sig-label">Verified By</div>
+
+  <div class="sig-sub">
+      (Shree Krishna Janmashtami Puja Samiti)<br />
+      Committee Administrator
+  </div>
+
+  <div class="signature-seal-row">
+
+    <img 
+        src="images/signature.png" 
+        class="sig-image" 
+        alt="Committee Administrator Signature" 
+    />
+
+    <img 
+        src="images/seal.png" 
+        class="seal-image" 
+        alt="Committee Seal" 
+    />
+
+  </div>
+
+</div>
 
             <!-- ─── FOOTER ─── -->
             <div class="receipt-footer">
