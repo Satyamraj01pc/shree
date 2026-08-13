@@ -2149,84 +2149,115 @@
         /* ═══════════════════════════════════════════════════════════════════
            PDF DOWNLOAD
            ═══════════════════════════════════════════════════════════════════ */
-        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            const btn = this;
-            const loading = document.getElementById('pdfLoading');
-            const receiptEl = document.getElementById('receiptContent');
+      document.getElementById('downloadPdfBtn').addEventListener('click', function() {
 
-            loading.classList.add('show');
-            btn.textContent = '⏳ Generating...';
-            btn.disabled = true;
+    const btn = this;
+    const loading = document.getElementById('pdfLoading');
+    const receiptEl = document.getElementById('receiptContent');
 
-            setTimeout(function() {
-                const clone = receiptEl.cloneNode(true);
+    loading.classList.add('show');
+    btn.textContent = '⏳ Generating...';
+    btn.disabled = true;
 
-                clone.style.width = '148mm';
-                clone.style.minHeight = '210mm';
-                clone.style.padding = '8mm 10mm 8mm';
-                clone.style.margin = '0';
-                clone.style.borderRadius = '0';
-                clone.style.boxShadow = 'none';
-                clone.style.background = '#fff';
-                clone.style.border = '1.5px solid #d4a017';
-                clone.style.fontSize = '11.5px';
-                clone.style.lineHeight = '1.6';
-                clone.style.color = '#1e1e2a';
-                clone.style.display = 'block';
-                clone.id = 'cloneForPdf';
+    setTimeout(function() {
 
-                document.body.appendChild(clone);
+        const clone = receiptEl.cloneNode(true);
 
-                setTimeout(() => {
-                    html2canvas(clone, {
-                        scale: 2.8,
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: '#ffffff',
-                        logging: false,
-                        width: 560,
-                        height: 793,
-                    }).then(function(canvasImg) {
-                        document.body.removeChild(clone);
-                        const imgData = canvasImg.toDataURL('image/jpeg', 0.95);
-                      const { jsPDF } = window.jspdf;
+        /* A4 SIZE */
+        clone.style.width = '210mm';
+        clone.style.height = '297mm';
+        clone.style.minHeight = '297mm';
 
-const pdf = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: [148, 210],
-    compress: true
+        clone.style.padding = '10mm 12mm';
+        clone.style.margin = '0';
+        clone.style.borderRadius = '0';
+        clone.style.boxShadow = 'none';
+        clone.style.background = '#fff';
+        clone.style.border = '1.5px solid #d4a017';
+
+        clone.style.fontSize = '12px';
+        clone.style.lineHeight = '1.6';
+        clone.style.color = '#1e1e2a';
+        clone.style.display = 'block';
+        clone.style.boxSizing = 'border-box';
+
+        clone.id = 'cloneForPdf';
+
+        document.body.appendChild(clone);
+
+        setTimeout(() => {
+
+            html2canvas(clone, {
+
+                scale: 2.5,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+
+                /* A4 PIXEL SIZE */
+                width: 794,
+                height: 1123,
+
+                windowWidth: 794,
+                windowHeight: 1123
+
+            }).then(function(canvasImg) {
+
+                document.body.removeChild(clone);
+
+                const imgData = canvasImg.toDataURL('image/jpeg', 0.95);
+
+                const { jsPDF } = window.jspdf;
+
+                /* A4 PDF */
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
+
+                const pdfWidth = 210;
+                const pdfHeight = 297;
+
+                /* FULL A4 PAGE */
+                pdf.addImage(
+                    imgData,
+                    'JPEG',
+                    0,
+                    0,
+                    pdfWidth,
+                    pdfHeight
+                );
+
+                pdf.save('Donation_Receipt_A4.pdf');
+
+                loading.classList.remove('show');
+                btn.textContent = '📄 Download Receipt';
+                btn.disabled = false;
+
+            }).catch(function(err) {
+
+                console.error('html2canvas error:', err);
+
+                if (document.getElementById('cloneForPdf')) {
+                    document.body.removeChild(clone);
+                }
+
+                loading.classList.remove('show');
+                btn.textContent = '📄 Download Receipt';
+                btn.disabled = false;
+
+                alert('PDF generation failed. Please use Print → Save as PDF.');
+
+            });
+
+        }, 400);
+
+    }, 300);
+
 });
-
-const pdfWidth = 148;
-const pdfHeight = 210;
-
-// Receipt को पूरे A5 page में fit करो
-pdf.addImage(
-    imgData,
-    'JPEG',
-    0,
-    0,
-    pdfWidth,
-    pdfHeight
-);
-
-pdf.save('Donation_Receipt_A5.pdf');
-
-                        loading.classList.remove('show');
-                        btn.textContent = '📄 Download Receipt';
-                        btn.disabled = false;
-                    }).catch(function(err) {
-                        console.error('html2canvas error:', err);
-                        document.body.removeChild(clone);
-                        loading.classList.remove('show');
-                        btn.textContent = '📄 Download Receipt';
-                        btn.disabled = false;
-                        alert('PDF generation failed. Please use Print → Save as PDF.');
-                    });
-                }, 400);
-            }, 300);
-        });
 
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
