@@ -340,10 +340,12 @@ input:focus,textarea:focus{outline:none;border-color:#ff9800;box-shadow:0 0 0 4p
    Your apps → Web app se ye 4 values copy karke yahan daalein
    ═══════════════════════════════════════════════════════════ */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "<Console se copy karein>",
+  authDomain: "krishna-donation.firebaseapp.com",
+  projectId: "krishna-donation",
+  storageBucket: "krishna-donation.firebasestorage.app",
+  messagingSenderId: "279060968275",
+  appId: "1:279060968275:web:dd2a56931751e2759aa7a6"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
