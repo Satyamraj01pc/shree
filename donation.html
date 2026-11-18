@@ -347,7 +347,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
+db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 const WEB3FORMS_KEY = '3e53d31a-caa7-4d87-8337-a775f73e8d7b';
 
 /* ═══════════════════ HELPERS ═══════════════════ */
@@ -767,7 +767,10 @@ form.addEventListener('submit', async function (e) {
     batch.set(db.collection('donations_private').doc(id), {
       mobile: phone, address: address, note: note, createdAt: ts
     });
-    await batch.commit();
+  await Promise.race([
+  batch.commit(),
+  new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), 15000))
+]);
 
     // Admin ko email (optional — fail ho to koi dikkat nahi)
     fetch('https://api.web3forms.com/submit', {
@@ -790,9 +793,10 @@ form.addEventListener('submit', async function (e) {
     renderDonorList(id);
   } catch (err) {
     console.error('Submission error:', err);
-    errorMsg.textContent = (err.code === 'permission-denied')
-      ? '❌ यह UPI Reference Number पहले से दर्ज है या जानकारी गलत है।'
-      : '❌ Network Error कृपया पुनः प्रयास करें।';
+    errorMsg.textContent =
+  err.code === 'timeout' ? '❌ Server se connect nahi ho paya। Firebase config/database check karein।' :
+  err.code === 'permission-denied' ? '❌ यह UPI Reference Number पहले से दर्ज है या जानकारी गलत है।' :
+  '❌ Network Error कृपया पुनः प्रयास करें।';
     errorMsg.style.display = 'block';
   } finally {
     submitBtn.disabled = false;
