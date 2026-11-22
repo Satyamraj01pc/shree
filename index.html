@@ -219,7 +219,7 @@ section.sec{padding:40px 0 6px}
   <p>श्री कृष्ण जन्माष्टमी पूजा समिति भदीड़, मुहम्मदाबाद गोहना, मऊ — चार वर्षों (2023–2026) से जन्माष्टमी महोत्सव। समिति आप सभी ग्रामवासियों का स्वागत करती है।</p>
   <div class="btns"><a class="btn p" href="donation.html">🙏 दान करें</a><a class="btn s" href="#members">👥 हमारे सदस्य</a></div>
   <div class="hstats">
-    <div><b data-to="4" id="hs1">0</b><small>आयोजन</small></div>
+    <div><b id="hs1">4</b><small>आयोजन</small></div>
     <div><b id="hsMem">0</b><small>सदस्य</small></div>
   </div>
   <div class="cdt">⏳ जन्माष्टमी 2027 में शेष समय</div>
@@ -372,6 +372,7 @@ renderMembers();
 
 /* Year teams */
 const years = Object.keys(Y).sort((a, b) => b - a);
+$('hs1').textContent = years.length;
 const leader = (l, ic) => `<div class="leader"><div class="cr">${ic}</div>${img(l[2] || M[l[0]][1], M[l[0]][0])}<h3>${M[l[0]][0]}</h3><span class="role">${l[1]}</span></div>`;
 function showYear(y) {
   const d = Y[y];
