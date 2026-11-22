@@ -167,6 +167,13 @@ section.sec{padding:40px 0 6px}
 .arow button{border:none;border-radius:20px;padding:7px 16px;font-weight:600;font-size:12.5px;cursor:pointer;color:#fff}
 .vbtn{background:#1e8e4e}.dbtn{background:#c0392b}
 .hint{font-size:12.5px;color:var(--mut);margin-top:6px}
+.ar2{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;background:#fffdf9}
+.ar2 .top{display:flex;gap:10px;align-items:center}.ar2 .top img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.ar2 .top b{display:block;font-size:14.5px}.ar2 .top small{color:var(--mut);font-size:12px}
+.ar2 .dt{font-size:13px;margin-top:8px;line-height:1.75;word-break:break-word}.ar2 .dt span{color:var(--mut)}
+.ar2 .bt{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ar2 button{border:none;border-radius:20px;padding:7px 16px;font-weight:600;font-size:12.5px;cursor:pointer;color:#fff}
+.ar2 .cp{background:#1f2937;padding:2px 10px;font-size:11px;margin-left:6px}
 
 /* RESPONSIVE */
 @media(max-width:1020px){
@@ -310,7 +317,9 @@ section.sec{padding:40px 0 6px}
   <button class="x" onclick="closeOv('panelOv')">✕</button>
   <h2>🛡️ Admin Panel — दान Verify करें</h2>
   <p class="hint" id="adUser"></p>
-  <p class="hint">⚠️ Verify करने से पहले अपने UPI app में नाम/राशि का payment जाँच लें।</p>
+  <p class="hint">⚠️ Verify करने से पहले अपने UPI app में UTR, नाम और राशि का payment जाँच लें।</p>
+  <div class="tabs" style="margin:12px 0 0"><button id="tabP" class="active" onclick="setTab('pending')">⏳ Pending</button><button id="tabV" onclick="setTab('verified')">✅ Verified</button></div>
+  <div class="msg" id="adStatus"></div>
   <div id="pendList"><div class="hint">लोड हो रहा है...</div></div>
   <button class="btn-main" style="background:#7f8c8d" id="adLogoutBtn">Logout</button>
 </div></div>
@@ -488,28 +497,59 @@ $('adLoginBtn').onclick = async function () {
 };
 $('adPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('adLoginBtn').click(); });
 $('adLogoutBtn').onclick = async () => { await auth.signOut(); closeOv('panelOv'); };
+let adTab = 'pending', adRun = 0;
+async function hashUtr(utr, salt) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + utr));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+function adMsg(t, ok) { const m = $('adStatus'); m.textContent = t; m.style.color = ok ? '#14532d' : '#b42318'; m.style.display = t ? 'block' : 'none'; }
+function setTab(t) {
+  adTab = t; adMsg('');
+  $('tabP').classList.toggle('active', t === 'pending'); $('tabV').classList.toggle('active', t === 'verified');
+  loadPending();
+}
 function loadPending() {
   if (unsub) unsub();
-  unsub = db.collection('donors').where('status', '==', 'pending').onSnapshot(snap => {
-    const box = $('pendList');
-    if (snap.empty) { box.innerHTML = '<div class="hint" style="padding:16px 0">✅ कोई Pending दान नहीं है।</div>'; return; }
-    box.innerHTML = snap.docs.map(d => {
+  $('pendList').innerHTML = '<div class="hint">लोड हो रहा है...</div>';
+  unsub = db.collection('donors').where('status', '==', adTab).onSnapshot(async snap => {
+    const run = ++adRun, box = $('pendList');
+    if (snap.empty) { box.innerHTML = `<div class="hint" style="padding:16px 0">${adTab === 'pending' ? '✅ कोई Pending दान नहीं है।' : 'अभी कोई Verified दान नहीं है।'}</div>`; return; }
+    const docs = snap.docs.sort((a, b) => ((b.data().createdAt || {}).seconds || 0) - ((a.data().createdAt || {}).seconds || 0));
+    const rows = await Promise.all(docs.map(async d => {
+      let p = {}; try { const ps = await db.collection('donations_private').doc(d.id).get(); if (ps.exists) p = ps.data(); } catch (e) { p = { err: e.code }; }
+      return [d, p];
+    }));
+    if (run !== adRun) return;
+    box.innerHTML = rows.map(([d, p]) => {
       const x = d.data(), dt = x.createdAt && x.createdAt.toDate ? x.createdAt.toDate().toLocaleString('en-IN') : '';
-      return `<div class="arow">${img(x.photo, x.fullName)}
-        <div class="i"><b>${esc(x.fullName)} — ₹${Number(x.amount).toLocaleString('en-IN')}</b><small>${dt}</small></div>
-        <button class="vbtn" onclick="verifyDonor('${d.id}')">✅ Verify</button>
-        <button class="dbtn" onclick="deleteDonor('${d.id}')">🗑 Delete</button></div>`;
+      const utr = p.utr ? esc(p.utr) : '';
+      return `<div class="ar2"><div class="top">${img(x.photo, x.fullName)}<div><b>${esc(x.fullName)} — ₹${Number(x.amount).toLocaleString('en-IN')}</b><small>🕒 ${dt}</small></div></div>
+        <div class="dt">
+          <div><span>🧾 UTR:</span> <b>${utr || '—'}</b>${utr ? ` <button class="cp" onclick="navigator.clipboard.writeText('${utr}');this.textContent='✓'">Copy</button>` : ''}</div>
+          <div><span>📱 मोबाइल:</span> ${p.mobile ? `<a href="tel:${esc(p.mobile)}">${esc(p.mobile)}</a>` : '—'}</div>
+          <div><span>📍 पता:</span> ${esc(p.address) || '—'}</div>
+          <div><span>📝 नोट:</span> ${esc(p.note) || '—'}</div>
+          ${p.err ? `<div style="color:#b42318">⚠️ विवरण नहीं मिला (${esc(p.err)}) — Rules जाँचें</div>` : ''}
+        </div>
+        <div class="bt">${adTab === 'pending' ? `<button class="vbtn" onclick="verifyDonor('${d.id}')">✅ Verify</button>` : `<button style="background:#d98a00" onclick="unverifyDonor('${d.id}')">↩️ Pending करें</button>`}
+          <button class="dbtn" onclick="deleteDonor('${d.id}','${utr}')">🗑 Delete</button></div></div>`;
     }).join('');
-  }, err => { console.error(err); $('pendList').innerHTML = '<div class="hint" style="color:#b42318">❌ Data नहीं मिल सका। Firestore Rules में admin access जाँचें।</div>'; });
+  }, err => { console.error(err); adMsg('❌ Data नहीं मिल सका (' + (err.code || 'error') + '). Firestore Rules जाँचें।', false); $('pendList').innerHTML = ''; });
 }
-async function verifyDonor(id) {
-  if (!confirm('क्या आपने payment जाँच ली? इस दान को Verify करें?')) return;
-  try { await db.collection('donors').doc(id).update({ status: 'verified' }); } catch (e) { alert('Verify नहीं हो सका: ' + (e.code || e.message)); }
+async function setStatus(id, st) {
+  try { await db.collection('donors').doc(id).update({ status: st }); adMsg(st === 'verified' ? '✅ Verify हो गया।' : '↩️ Pending कर दिया।', true); }
+  catch (e) { console.error(e); adMsg('❌ Update नहीं हो सका: ' + (e.code || e.message), false); }
 }
-async function deleteDonor(id) {
+function verifyDonor(id) { if (confirm('क्या आपने payment जाँच ली? इस दान को Verify करें?')) setStatus(id, 'verified'); }
+function unverifyDonor(id) { if (confirm('इस दान को वापस Pending करें?')) setStatus(id, 'pending'); }
+async function deleteDonor(id, utr) {
   if (!confirm('यह entry हमेशा के लिए हटाएँ?')) return;
-  try { const b = db.batch(); b.delete(db.collection('donors').doc(id)); b.delete(db.collection('donations_private').doc(id)); await b.commit(); }
-  catch (e) { alert('Delete नहीं हो सका: ' + (e.code || e.message)); }
+  const errs = [];
+  const del = async (col, did) => { try { await db.collection(col).doc(did).delete(); } catch (e) { console.error(col, e); errs.push(col + ': ' + (e.code || e.message)); } };
+  await del('donors', id);
+  await del('donations_private', id);
+  if (utr) await del('receipt_data', await hashUtr(utr, 'rcpt:'));
+  adMsg(errs.length ? '❌ Delete में दिक्कत — ' + errs.join(' | ') : '🗑 Entry हटा दी गई।', !errs.length);
 }
 </script>
 </body>
