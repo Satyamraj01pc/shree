@@ -354,8 +354,8 @@ function showFieldError(input, errorEl, show) {
   input.style.borderColor = show ? '#dc3545' : '';
   input.style.boxShadow = show ? '0 0 0 4px rgba(220,53,69,.12)' : '';
 }
-async function hashUtr(utr) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('skjps:' + utr));
+async function hashUtr(utr, salt = 'skjps:') {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + utr));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
@@ -547,7 +547,7 @@ $('verifyBtn').addEventListener('click', async function () {
       resultDiv.innerHTML = `<div class="vr-title">⏳ Verification Pending</div><div class="vr-detail">${escapeHtml(d.fullName)} जी, आपका दान दर्ज है। Verify होने के बाद यहीं से Receipt Download कर सकेंगे।</div>`;
       return;
     }
-    const pSnap = await db.collection('donations_private').doc(id).get();
+    const pSnap = await db.collection('receipt_data').doc(await hashUtr(ref, 'rcpt:')).get();
     const p = pSnap.exists ? pSnap.data() : {};
     const date = d.createdAt && d.createdAt.toDate ? formatDate(d.createdAt.toDate()) : formatDate(new Date());
     _verifiedData = {
@@ -609,7 +609,9 @@ form.addEventListener('submit', async function (e) {
 
     const batch = db.batch();
     batch.set(db.collection('donors').doc(id), pub);
-    batch.set(db.collection('donations_private').doc(id), { mobile: phone, address: address, note: note, createdAt: ts });
+    const rid = await hashUtr(upi, 'rcpt:');
+    batch.set(db.collection('donations_private').doc(id), { mobile: phone, address: address, note: note, utr: upi, createdAt: ts });
+    batch.set(db.collection('receipt_data').doc(rid), { mobile: phone, address: address, createdAt: ts });
     await Promise.race([batch.commit(), new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), 15000))]);
 
     fetch('https://api.web3forms.com/submit', {
