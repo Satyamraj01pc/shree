@@ -3,344 +3,315 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Secure Donation Portal | श्री कृष्ण जन्माष्टमी पूजा समिति</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<title>Donation Portal | श्री कृष्ण जन्माष्टमी पूजा समिति</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <style>
+:root{--mar:#5b0f1e;--mar2:#8a1c2f;--saf:#f28c0f;--gold:#e6b422;--cream:#fff9ef;--ink:#2a1a1a;--mut:#7a6a62;--line:#efe3d3;--ok:#1e8e4e}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:linear-gradient(135deg,#081b3a,#123f85);padding:20px;min-height:100vh}
-.container{max-width:960px;margin:auto;background:#fff;border-radius:25px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);min-height:100vh}
 
-/* HEADER */
-.header{background:linear-gradient(90deg,#ff7b00,#ffb300);padding:28px 20px;text-align:center;color:#fff}
-.header h1{font-size:30px;font-weight:700;letter-spacing:.5px}
-.header p{margin-top:4px;font-weight:400;opacity:.95}
-.secure-badge{display:inline-block;margin-top:12px;background:#a84d7f;padding:6px 22px;border-radius:30px;font-size:13px;font-weight:600}
+/* HERO */
+.hero{background:radial-gradient(circle at 20% 10%,rgba(242,140,15,.35),transparent 45%),radial-gradient(circle at 85% 90%,rgba(230,180,34,.25),transparent 40%),linear-gradient(135deg,var(--mar),var(--mar2));color:#fff;text-align:center;padding:48px 20px 110px;position:relative;overflow:hidden}
+.hero::after{content:"ॐ";position:absolute;right:-20px;top:-40px;font-size:260px;opacity:.06;font-family:'Tiro Devanagari Hindi',serif;line-height:1}
+.hero .om{font-size:38px}
+.hero h1{font-family:'Tiro Devanagari Hindi','Poppins',serif;font-size:clamp(24px,5vw,42px);font-weight:400;margin:6px 0;letter-spacing:.5px}
+.hero p{opacity:.9;font-size:14px}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.badges span{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:6px 16px;border-radius:30px;font-size:12px;font-weight:500}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
 
-/* LAYOUT */
-.content{padding:30px 30px 20px}
-.row-split{display:flex;gap:30px;flex-wrap:wrap}
-.row-split .col-main{flex:2;min-width:300px}
-.row-split .col-side{flex:1;min-width:250px}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:-62px;position:relative;z-index:2}
+.stat{background:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 12px 30px rgba(91,15,30,.12);display:flex;align-items:center;gap:14px;border:1px solid var(--line)}
+.stat .ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#fff1dc;flex-shrink:0}
+.stat b{display:block;font-size:22px;color:var(--mar);line-height:1.2}
+.stat small{color:var(--mut);font-size:12px}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+.step{display:flex;gap:12px;align-items:flex-start;padding:4px 6px}
+.step i{font-style:normal;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--saf),var(--gold));color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step b{font-size:14px;display:block}
+.step span{font-size:12px;color:var(--mut)}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 390px;gap:22px;align-items:start;grid-template-areas:"form qr" "form verify" "list verify";padding-bottom:40px}
+.a-form{grid-area:form}.a-qr{grid-area:qr}.a-verify{grid-area:verify}.a-list{grid-area:list}
+.card{background:#fff;border-radius:20px;padding:26px;box-shadow:0 8px 28px rgba(91,15,30,.07);border:1px solid var(--line)}
+.card h2{font-size:18px;color:var(--mar);display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.card .sub{font-size:12.5px;color:var(--mut);margin-bottom:12px}
 
 /* QR */
-.qr{display:block;margin:6px auto 14px;width:240px;max-width:100%;background:#fff;padding:10px;border-radius:16px;border:4px solid #ff9800;box-shadow:0 8px 20px rgba(0,0,0,.12)}
-.upi-apps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:8px}
-.upi-apps span{padding:6px 16px;border-radius:30px;color:#fff;font-size:13px;font-weight:600}
+.qr-card{text-align:center;background:linear-gradient(180deg,#fff,#fff7e8)}
+.qr{width:220px;max-width:100%;background:#fff;padding:10px;border-radius:18px;border:3px solid var(--saf);box-shadow:0 8px 22px rgba(242,140,15,.2);margin:10px auto;display:block}
+.upi-apps{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.upi-apps span{padding:4px 12px;border-radius:30px;color:#fff;font-size:11.5px;font-weight:600}
 .phonepe{background:#5f259f}.gpay{background:#4285F4}.paytm{background:#00BAF2}.bhim{background:#ff9800}
-.note-box{background:#fff8db;border-left:5px solid #ff9800;padding:12px 16px;border-radius:10px;margin-top:14px;font-size:13px;line-height:1.6;color:#3d2e00;font-weight:500}
+.note-box{background:#fff4d6;border-left:4px solid var(--saf);padding:10px 14px;border-radius:10px;margin-top:14px;font-size:12.5px;line-height:1.6;text-align:left;color:#5a3d00}
 
 /* FORM */
-label{display:block;margin-top:16px;margin-bottom:4px;font-size:13px;font-weight:600;color:#1a1a2e}
-input,textarea{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;transition:.3s;background:#fafcff}
-input:focus,textarea:focus{outline:none;border-color:#ff9800;box-shadow:0 0 0 4px rgba(255,152,0,.12)}
-.form-row{display:flex;gap:16px;flex-wrap:wrap}
-.form-row>div{flex:1;min-width:180px}
-.field-hint{font-size:11px;color:#7a6a5a;margin-top:4px}
-.field-error{color:#dc3545;font-size:12px;font-weight:500;margin-top:4px;display:none}
-.field-error.show{display:block;animation:fadeUp .3s ease}
-.btn-submit{width:100%;padding:16px;margin-top:22px;background:linear-gradient(90deg,#ff7b00,#ffb300);border:none;border-radius:12px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;transition:.3s}
-.btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,152,0,.35)}
+label{display:block;margin:16px 0 5px;font-size:13px;font-weight:600}
+label em{color:#d33;font-style:normal}
+input,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:14px;background:#fffdf9;transition:.25s;color:var(--ink)}
+input:focus,textarea:focus{outline:none;border-color:var(--saf);box-shadow:0 0 0 4px rgba(242,140,15,.14);background:#fff}
+textarea{resize:vertical}
+.form-row{display:flex;gap:16px;flex-wrap:wrap}.form-row>div{flex:1;min-width:190px}
+.field-hint{font-size:11px;color:var(--mut);margin-top:4px}
+.field-error{color:#d33;font-size:12px;font-weight:500;margin-top:4px;display:none}
+.field-error.show{display:block;animation:fadeUp .3s}
+.btn-submit{width:100%;padding:16px;margin-top:24px;background:linear-gradient(90deg,var(--saf),var(--gold));border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;transition:.3s;letter-spacing:.5px;box-shadow:0 10px 24px rgba(242,140,15,.3)}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(242,140,15,.4)}
 .btn-submit:disabled{opacity:.7;cursor:not-allowed;transform:none}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-top:3px solid #fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:10px}
+.loader{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.success-msg,.error-msg{padding:12px 16px;border-radius:12px;margin:14px 0;font-weight:500;font-size:13.5px;display:none}
+.success-msg{background:#e4f6ea;color:#14532d;border-left:4px solid var(--ok)}
+.error-msg{background:#fde8e8;color:#7f1d1d;border-left:4px solid #dc3545}
 
-/* PHOTO UPLOAD */
-.photo-upload{display:flex;align-items:center;gap:16px;background:#fafcff;border:2px dashed #e5e7eb;border-radius:12px;padding:12px 14px}
-.photo-upload img,.photo-ph{width:68px;height:68px;border-radius:50%;object-fit:cover;border:3px solid #ff9800;flex-shrink:0}
-.photo-ph{display:flex;align-items:center;justify-content:center;font-size:30px;background:#fff3e0}
-.btn-photo,.btn-photo-remove{padding:8px 16px;border:none;border-radius:30px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:#1a1a2e;margin:0 6px 4px 0}
+/* PHOTO */
+.photo-upload{display:flex;align-items:center;gap:16px;background:#fffdf9;border:2px dashed #e4d3b8;border-radius:14px;padding:14px}
+.photo-upload img,.photo-ph{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid var(--saf);flex-shrink:0}
+.photo-ph{display:flex;align-items:center;justify-content:center;font-size:30px;background:#fff1dc}
+.btn-photo,.btn-photo-remove{padding:8px 16px;border:none;border-radius:30px;font-size:12.5px;font-weight:600;cursor:pointer;color:#fff;background:var(--mar);margin:0 6px 4px 0}
 .btn-photo-remove{background:#c0392b}
 
 /* VERIFY */
-.verify-box{background:#f8f6f2;border-radius:16px;padding:22px 20px 24px;border:2px solid #e8e0d6;margin-top:8px}
-.verify-box h3{font-size:18px;font-weight:700;color:#b45309;text-align:center;margin-bottom:14px;letter-spacing:1px}
 .verify-input{display:flex;gap:10px;flex-wrap:wrap}
-.verify-input input{border:2px solid #d4c8b8}
-.verify-error{color:#dc3545;font-size:12px;font-weight:500;margin-top:4px;display:none}
-.verify-error.show{display:block;animation:fadeUp .3s ease}
-.btn-verify{padding:12px 28px;background:#1a1a2e;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;white-space:nowrap}
-.btn-verify:hover{background:#2d2d4a;transform:translateY(-1px)}
-.btn-verify:disabled{opacity:.6;cursor:not-allowed}
-.verify-result{margin-top:16px;padding:16px 18px;border-radius:12px;display:none;animation:fadeUp .4s ease}
-.verify-result.success{display:block;background:#d4edda;border-left:5px solid #28a745;color:#155724}
+.verify-input>div{flex:1;min-width:150px}
+.verify-error{color:#d33;font-size:12px;margin-top:4px;display:none}.verify-error.show{display:block}
+.btn-verify{padding:12px 22px;background:var(--mar);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:.25s;white-space:nowrap;align-self:flex-start}
+.btn-verify:hover{background:var(--mar2);transform:translateY(-1px)}.btn-verify:disabled{opacity:.6}
+.verify-result{margin-top:16px;padding:16px 18px;border-radius:14px;display:none;animation:fadeUp .4s}
+.verify-result.success{display:block;background:#e4f6ea;border-left:5px solid var(--ok);color:#14532d}
 .verify-result.pending{display:block;background:#fff3cd;border-left:5px solid #f0ad4e;color:#664d03}
-.verify-result.error{display:block;background:#f8d7da;border-left:5px solid #dc3545;color:#721c24}
-.vr-title{font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vr-title .badge{background:#28a745;color:#fff;font-size:11px;padding:2px 14px;border-radius:30px;font-weight:600}
+.verify-result.error{display:block;background:#fde8e8;border-left:5px solid #dc3545;color:#7f1d1d}
+.vr-title{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.vr-title .badge{background:var(--ok);color:#fff;font-size:10.5px;padding:2px 12px;border-radius:30px}
 .vr-detail{font-size:13px;margin-top:6px;line-height:1.9}
 .vr-photo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:8px}
-.vr-photo-wrap img{width:56px;height:56px;border-radius:50%;border:3px solid #28a745;object-fit:cover;flex-shrink:0}
-.vr-name-big{font-size:18px;font-weight:700;color:#0d3b1e}
-.amount-words{font-style:italic;font-weight:500;font-size:12.5px}
-.btn-receipt{margin-top:10px;padding:10px 22px;border:none;border-radius:30px;background:#c0392b;color:#fff;font-weight:600;font-size:13px;cursor:pointer}
+.vr-photo-wrap img{width:56px;height:56px;border-radius:50%;border:3px solid var(--ok);object-fit:cover}
+.vr-name-big{font-size:17px;font-weight:700}
+.amount-words{font-style:italic;font-size:12.5px}
+.btn-receipt{margin-top:10px;padding:10px 22px;border:none;border-radius:30px;background:var(--mar);color:#fff;font-weight:600;font-size:13px;cursor:pointer}
 
-/* DONOR LIST */
-.donor-list{margin-top:24px}
-.donor-card{display:flex;align-items:center;gap:14px;background:#f5f5f7;padding:12px 16px;margin-bottom:10px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.05);transition:.3s;border-left:5px solid #ddd}
-.donor-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
-.donor-card .sno{font-weight:700;color:#b45309;font-size:14px;min-width:32px;text-align:center}
-.donor-card img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:3px solid #ff9800;background:#ddd;flex-shrink:0}
-.donor-card .info{flex:1}
-.donor-card .info h3{font-size:15px;font-weight:600;color:#1a1a2e}
-.donor-card .info p{font-size:13px;color:#555;font-weight:500}
-.donor-card .info .donor-date{font-size:11px;color:#888}
-.donor-card.is-verified{border-left-color:#28a745}
-.donor-card.is-pending{border-left-color:#f0ad4e}
-.status-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 10px;border-radius:30px;margin-left:8px;vertical-align:middle}
-.status-badge.pending{background:#fff3cd;color:#8a6d00}
-.status-badge.verified{background:#d4edda;color:#155724}
-.highlight-card{background:#fff8e1!important;box-shadow:0 0 24px rgba(255,152,0,.2)!important;transform:scale(1.02)}
-.empty-donors{text-align:center;color:#aaa;padding:20px;font-style:italic}
+/* DONORS */
+.list-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.count-pill{font-size:12px;color:var(--mar);background:#fff1dc;padding:4px 14px;border-radius:20px;font-weight:600}
+.donor-card{display:flex;align-items:center;gap:14px;background:#fffdf9;padding:12px 16px;margin-bottom:10px;border-radius:14px;border:1px solid var(--line);border-left:5px solid #ddd;transition:.25s}
+.donor-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(91,15,30,.08)}
+.donor-card .sno{font-weight:700;color:var(--saf);font-size:13px;min-width:30px;text-align:center}
+.donor-card img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);background:#eee;flex-shrink:0}
+.donor-card .info{flex:1;min-width:0}
+.donor-card h3{font-size:14.5px;font-weight:600}
+.donor-card p{font-size:15px;color:var(--mar);font-weight:700}
+.donor-date{font-size:11px;color:var(--mut)}
+.donor-card.is-verified{border-left-color:var(--ok)}.donor-card.is-pending{border-left-color:#f0ad4e}
+.status-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 10px;border-radius:30px;margin-left:6px;vertical-align:middle}
+.status-badge.pending{background:#fff3cd;color:#8a6d00}.status-badge.verified{background:#d4edda;color:#155724}
+.highlight-card{background:#fff6e0!important;box-shadow:0 0 0 3px rgba(242,140,15,.35)!important}
+.empty-donors{text-align:center;color:#b3a496;padding:24px;font-style:italic}
 
 /* FOOTER */
-.footer{background:#111827;color:#e5e7eb;padding:24px 20px;text-align:center;line-height:2;font-size:13px}
-.footer .message{color:#ffcc00;font-weight:600;font-size:15px;margin-bottom:4px}
-.footer a{color:#ffb300;text-decoration:none}
+.footer{background:var(--mar);color:#f3e2d0;text-align:center;padding:30px 18px;line-height:2;font-size:13px}
+.footer .message{color:var(--gold);font-weight:600;font-size:15px}
+.footer a{color:var(--gold);text-decoration:none}
 
 /* RECEIPT */
-#receipt-container{display:none;padding:28px 16px 20px;background:#e8e4de}
-.receipt-success-msg{display:none;background:#d4edda;border:1px solid #b7d8c4;border-radius:12px;padding:16px 20px;margin:0 0 18px;text-align:center;color:#155724;font-size:15px;font-weight:600;animation:fadeUp .5s ease}
+#receipt-container{display:none;padding:28px 16px;background:#efe6d8}
+.receipt-success-msg{display:none;max-width:560px;margin:0 auto 16px;background:#e4f6ea;border-radius:12px;padding:14px 18px;text-align:center;color:#14532d;font-weight:600;font-size:14px}
 .receipt-success-msg.show{display:block}
-.receipt-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.receipt-actions button{padding:10px 28px;border:none;border-radius:40px;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;color:#fff}
-.btn-print{background:#1a1a2e}.btn-pdf{background:#c0392b}.btn-back{background:#7f8c8d}
+.receipt-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.receipt-actions button{padding:10px 24px;border:none;border-radius:40px;font-size:14px;font-weight:600;cursor:pointer;color:#fff;transition:.25s}
+.btn-print{background:#1f2937}.btn-pdf{background:#c0392b}.btn-back{background:#7f8c8d}
 .receipt-actions button:hover{transform:translateY(-2px)}
-.receipt-wrapper{display:flex;justify-content:center;padding:4px}
-.receipt{width:148mm;min-height:210mm;background:#fff;padding:8mm 10mm;border-radius:4px;box-shadow:0 12px 40px rgba(0,0,0,.16);border:2px solid #d4a017;font-size:11.5px;line-height:1.6;color:#1e1e2a}
+.receipt-wrapper{display:flex;justify-content:center}
+.receipt{width:148mm;min-height:210mm;background:#fff;padding:8mm 10mm;box-shadow:0 12px 40px rgba(0,0,0,.16);border:2px solid #d4a017;font-size:11.5px;line-height:1.6;color:#1e1e2a}
 .receipt-header{text-align:center;border-bottom:2px solid #d4a017;padding-bottom:10px;margin-bottom:10px}
 .receipt-logo{display:flex;align-items:center;justify-content:center;gap:12px}
-.receipt-logo img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #d4a017;background:#f5f0e8;flex-shrink:0}
+.receipt-logo img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #d4a017;background:#f5f0e8}
 .logo-text{font-size:16px;font-weight:700;color:#b45309;line-height:1.2;letter-spacing:.5px}
 .logo-text small{display:block;font-size:9.5px;font-weight:400;color:#6b4f2e}
-.receipt-meta-row{display:flex;justify-content:space-between;padding:6px 0 8px;border-bottom:1px dashed #d4c8b8;font-size:11px;color:#4a3a2a;margin-bottom:10px;flex-wrap:wrap;gap:4px 8px}
-.receipt-body{padding:2px 0 8px}
-.field-row{display:flex;padding:3px 0;align-items:baseline;font-size:11.5px}
+.receipt-meta-row{display:flex;justify-content:space-between;padding:6px 0 8px;border-bottom:1px dashed #d4c8b8;font-size:11px;margin-bottom:10px;flex-wrap:wrap;gap:4px 8px}
+.field-row{display:flex;padding:3px 0;align-items:baseline}
 .field-row .label{width:115px;font-weight:600;color:#4a3a2a;flex-shrink:0;margin:0;font-size:11.5px}
-.field-row .value{flex:1;color:#1a1a2e;font-weight:500;word-break:break-word;border-bottom:1px dotted #e0d8d0;padding-bottom:1px}
+.field-row .value{flex:1;font-weight:500;word-break:break-word;border-bottom:1px dotted #e0d8d0}
 .field-row-amount{background:#fff5e6;border-radius:4px;padding:4px 10px;margin:4px 0}
-.field-row-amount .label{font-weight:700;color:#b45309}
-.field-row-amount .value{font-weight:700;color:#b45309;font-size:15px;border-bottom:none}
+.field-row-amount .label,.field-row-amount .value{font-weight:700;color:#b45309;border-bottom:none}
+.field-row-amount .value{font-size:15px}
 .field-row-words{background:#faf6f0;border-radius:4px;padding:4px 10px;margin:4px 0;border-left:3px solid #d4a017}
 .field-row-words .value{font-style:italic;border-bottom:none}
 .receipt-thankyou{text-align:center;padding:10px 0 8px;font-size:12px;font-weight:500;color:#b45309;border-top:1px solid #f0e6d0;border-bottom:1px solid #f0e6d0;margin:8px 0}
 .receipt-signature{text-align:center;padding:6px 0 4px}
-.sig-label{font-size:12px;font-weight:600;color:#4a3a2a;letter-spacing:.5px}
+.sig-label{font-size:12px;font-weight:600;color:#4a3a2a}
 .sig-sub{font-size:9.5px;color:#6b5a4a;line-height:1.4;margin-top:2px}
 .signature-seal-row{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:2px}
-.sig-image{width:82px;height:auto;display:block;object-fit:contain}
-.seal-image{width:58px;height:58px;display:block;object-fit:contain}
+.sig-image{width:82px;height:auto;object-fit:contain}.seal-image{width:58px;height:58px;object-fit:contain}
 .receipt-footer{margin-top:8px;padding-top:8px;border-top:1px solid #f0e6d0;font-size:8.5px;color:#7a6a5a;text-align:center;line-height:1.6}
-.downloaded-on{font-weight:500;color:#4a3a2a;font-size:9px}
-.disclaimer{font-style:italic;font-size:8px;color:#8a7a6a}
+.downloaded-on{font-weight:500;color:#4a3a2a;font-size:9px}.disclaimer{font-style:italic;font-size:8px}
 .shri-krishna-ornament{font-size:18px;text-align:center;opacity:.08;letter-spacing:6px;color:#b45309}
 
-/* PRINT */
-@media print{
-  body{background:#fff!important;padding:0!important}
-  .container{box-shadow:none!important;border-radius:0!important;max-width:100%!important}
-  .header,.footer,#mainContent,.receipt-actions,.receipt-success-msg{display:none!important}
-  #receipt-container{display:block!important;padding:0!important;background:#fff!important}
-  .receipt-wrapper{padding:0!important}
-  .receipt{box-shadow:none!important;border-radius:0!important;margin:0 auto!important;font-size:10.5px!important}
-}
+.pdf-loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;justify-content:center;align-items:center;flex-direction:column;color:#fff;font-size:18px;font-weight:600}
+.pdf-loading .spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-bottom:16px}
+.pdf-loading.show{display:flex}
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .content{padding:20px 16px}
-  .row-split{flex-direction:column}
-  .row-split .col-main,.row-split .col-side{min-width:unset}
+@media print{
+  body{background:#fff!important}
+  .hero,.wrap,.footer,.receipt-actions,.receipt-success-msg{display:none!important}
+  #receipt-container{display:block!important;padding:0!important;background:#fff!important}
+  .receipt{box-shadow:none!important;margin:0 auto!important;font-size:10.5px!important}
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;grid-template-areas:"qr" "form" "verify" "list"}
+  .stats,.steps{grid-template-columns:1fr}
+  .stats{margin-top:-56px}
+  .card{padding:20px 16px}
+}
+@media(max-width:640px){
   .receipt{width:100%!important;min-height:auto!important;padding:6mm!important;font-size:10.5px!important}
   .field-row .label{width:90px!important;font-size:10px!important}
-  .field-row .value{font-size:10.5px!important}
-  .field-row-amount .value{font-size:13px!important}
-  .logo-text{font-size:14px!important}
-  .receipt-logo img{width:40px!important;height:40px!important}
-  .receipt-actions button{padding:8px 16px;font-size:12px}
-  .qr{width:180px}
-  .header h1{font-size:22px}
-  .verify-input{flex-direction:column}
-  .btn-verify{width:100%}
-  .donor-card img{width:40px;height:40px}
+  .logo-text{font-size:13px!important}.receipt-logo img{width:38px!important;height:38px!important}
+  .donor-card img{width:40px;height:40px}.qr{width:190px}
 }
-@media(max-width:400px){
-  .header h1{font-size:18px}
-  .btn-submit{font-size:15px;padding:14px}
-  .field-row .label{width:75px!important}
-  .logo-text{font-size:12px!important}
-  .receipt-logo img{width:34px!important;height:34px!important}
-}
-
-/* UTILITY */
-.success-msg{background:#d4edda;color:#155724;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500;border-left:5px solid #28a745;display:none}
-.error-msg{background:#f8d7da;color:#721c24;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:500;border-left:5px solid #dc3545;display:none}
-.pdf-loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;justify-content:center;align-items:center;flex-direction:column;color:#fff;font-size:18px;font-weight:600}
-.pdf-loading .spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,.2);border-top:5px solid #ffb300;border-radius:50%;animation:spin .9s linear infinite;margin-bottom:16px}
-.pdf-loading.show{display:flex}
-.mt-20{margin-top:20px}
 </style>
 </head>
 <body>
 
-<div class="pdf-loading" id="pdfLoading">
-  <div class="spinner"></div>
-  <span>⏳ Receipt PDF तैयार हो रहा है...</span>
+<div class="pdf-loading" id="pdfLoading"><div class="spinner"></div><span>⏳ Receipt PDF तैयार हो रहा है...</span></div>
+
+<header class="hero">
+  <div class="om">🌺</div>
+  <h1>श्री कृष्ण जन्माष्टमी पूजा समिति</h1>
+  <p>📍 भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)</p>
+  <div class="badges"><span>🔒 Secure Donation Portal</span><span>✅ Verified Receipt</span><span>🙏 100% सेवा कार्य हेतु</span></div>
+</header>
+
+<div class="wrap">
+  <section class="stats">
+    <div class="stat"><div class="ic">🙏</div><div><b id="statCount">0</b><small>कुल दानदाता</small></div></div>
+    <div class="stat"><div class="ic">✅</div><div><b id="statVerified">0</b><small>Verified दान</small></div></div>
+    <div class="stat"><div class="ic">💰</div><div><b id="statAmount">₹0</b><small>Verified कुल राशि</small></div></div>
+  </section>
+
+  <section class="steps">
+    <div class="step"><i>1</i><div><b>QR स्कैन करें</b><span>UPI से दान राशि भेजें</span></div></div>
+    <div class="step"><i>2</i><div><b>फॉर्म भरें</b><span>UTR नंबर के साथ जानकारी दें</span></div></div>
+    <div class="step"><i>3</i><div><b>Verify &amp; Receipt</b><span>Verify होने पर Receipt पाएँ</span></div></div>
+  </section>
+
+  <main class="grid" id="mainContent">
+
+    <section class="card qr-card a-qr">
+      <h2 style="justify-content:center">📲 दान करने के लिए स्कैन करें</h2>
+      <img src="imagesqr.png" class="qr" alt="Donation QR" />
+      <div class="upi-apps"><span class="phonepe">PhonePe</span><span class="gpay">Google Pay</span><span class="paytm">Paytm</span><span class="bhim">BHIM UPI</span></div>
+      <div class="note-box">पहले QR स्कैन करके भुगतान करें। फिर Payment History से <b>UPI Reference Number (UTR)</b> कॉपी करके फॉर्म में दर्ज करें।</div>
+    </section>
+
+    <section class="card a-form" id="main-form-section">
+      <h2>📝 दान की जानकारी</h2>
+      <p class="sub">सभी * वाले फ़ील्ड ज़रूरी हैं। Submit से पहले जानकारी एक बार जाँच लें।</p>
+      <div id="formSuccessMsg" class="success-msg"></div>
+      <div id="formErrorMsg" class="error-msg">❌ Something Wrong कृपया पुनः प्रयास करें।</div>
+
+      <form id="donationForm" novalidate>
+        <div class="form-row">
+          <div>
+            <label>पूरा नाम <em>*</em></label>
+            <input type="text" id="fullNameInput" placeholder="Full name (English)" maxlength="18" required />
+            <div class="field-error" id="nameError">❌ नाम में केवल 4 से 18 अक्षर (English) होने चाहिए।</div>
+          </div>
+          <div>
+            <label>मोबाइल नंबर <em>*</em></label>
+            <input type="tel" id="mobileInput" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" inputmode="numeric" required />
+            <div class="field-error" id="mobileError">❌ मोबाइल नंबर 10 अंक का ही डालें।</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>दान राशि (₹) <em>*</em></label>
+            <input type="text" id="amountInput" placeholder="₹ 1 – 9999" maxlength="4" inputmode="numeric" required />
+            <div class="field-error" id="amountError">❌ दान राशि ₹1 से ₹9999 के बीच होनी चाहिए।</div>
+          </div>
+          <div>
+            <label>UPI Reference Number (UTR) <em>*</em></label>
+            <input type="text" id="upiInput" placeholder="12 अंकों का UTR नंबर" maxlength="16" inputmode="numeric" autocomplete="off" required />
+            <div class="field-error" id="upiError">❌ UTR Number 12 से 16 अंकों का दर्ज करें।</div>
+          </div>
+        </div>
+
+        <label>पता <em>*</em></label>
+        <textarea id="addressInput" rows="3" maxlength="300" placeholder="पूरा पता दर्ज करें" required></textarea>
+
+        <label>नोट (Optional)</label>
+        <textarea id="noteInput" rows="2" maxlength="300" placeholder="अपना संदेश लिखें"></textarea>
+
+        <label>प्रोफाइल फोटो (Optional)</label>
+        <div class="photo-upload">
+          <img id="photoPreview" alt="Preview" style="display:none" />
+          <div id="photoPlaceholder" class="photo-ph">👤</div>
+          <div>
+            <input type="file" id="photoInput" accept="image/*" hidden />
+            <button type="button" class="btn-photo" onclick="document.getElementById('photoInput').click()">📷 फोटो चुनें</button>
+            <button type="button" class="btn-photo-remove" id="photoRemove" style="display:none">✖ हटाएँ</button>
+            <div class="field-hint">फोटो अपने आप छोटी (compress) हो जाएगी</div>
+          </div>
+        </div>
+        <div class="field-error" id="photoError"></div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">🙏 DONATE करें</button>
+      </form>
+    </section>
+
+    <section class="card a-verify">
+      <h2>🔍 Verify Donation</h2>
+      <p class="sub">अपना UTR नंबर डालकर स्थिति देखें और Verified होने पर Receipt Download करें।</p>
+      <div class="verify-input">
+        <div>
+          <input type="text" id="verifyInput" placeholder="Enter UTR Number" maxlength="16" inputmode="numeric" autocomplete="off" />
+          <div class="verify-error" id="verifyError">❌ UTR Number 12 से 16 अंकों का दर्ज करें।</div>
+        </div>
+        <button class="btn-verify" id="verifyBtn">🔍 VERIFY</button>
+      </div>
+      <div class="verify-result" id="verifyResult"></div>
+    </section>
+
+    <section class="card a-list">
+      <div class="list-head">
+        <h2 style="margin:0">🏆 प्रमुख दानदाता 2026</h2>
+        <span class="count-pill" id="donorCount">0 दानदाता</span>
+      </div>
+      <div id="donorList"><div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div></div>
+    </section>
+  </main>
 </div>
 
-<div class="container">
-
-  <!-- HEADER -->
-  <div class="header">
-    <h1>🌺 श्री कृष्ण जन्माष्टमी पूजा समिति 🌺</h1>
-    <p>भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)</p>
-    <div class="secure-badge">🔒 Secure Donation Portal</div>
+<div id="receipt-container">
+  <div class="receipt-success-msg" id="receiptSuccessMsg">✅ आपका दान Verified है। कृपया receipt Download करें।</div>
+  <div class="receipt-actions">
+    <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
+    <button class="btn-pdf" id="downloadPdfBtn">📄 Download Receipt</button>
+    <button class="btn-back" onclick="goBackToForm()">⬅️ Back</button>
   </div>
-
-  <!-- CONTENT -->
-  <div class="content" id="mainContent">
-    <div class="row-split">
-
-      <!-- MAIN COLUMN -->
-      <div class="col-main">
-        <img src="imagesqr.png" class="qr" alt="Donation QR" />
-
-        <div class="upi-apps">
-          <span class="phonepe">PhonePe</span>
-          <span class="gpay">Google Pay</span>
-          <span class="paytm">Paytm</span>
-          <span class="bhim">BHIM UPI</span>
-        </div>
-
-        <div class="note-box">
-          पहले QR Code स्कैन करके भुगतान करें, फिर नीचे अपनी जानकारी भरें। भुगतान करने के बाद Payment History में जाकर UPI Reference Number कॉपी करें और नीचे दर्ज करें।
-        </div>
-
-        <!-- FORM -->
-        <div id="main-form-section">
-          <div id="formSuccessMsg" class="success-msg"></div>
-          <div id="formErrorMsg" class="error-msg">❌ Something Wrong कृपया पुनः प्रयास करें।</div>
-
-          <form id="donationForm" novalidate>
-            <div class="form-row">
-              <div>
-                <label>पूरा नाम *</label>
-                <input type="text" id="fullNameInput" placeholder="पूरा नाम दर्ज करें" maxlength="18" required />
-                <div class="field-error" id="nameError">❌ नाम में केवल 4 से 18 अक्षर (English) होने चाहिए।</div>
-              </div>
-              <div>
-                <label>मोबाइल नंबर *</label>
-                <input type="tel" id="mobileInput" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" required />
-                <div class="field-error" id="mobileError">❌ मोबाइल नंबर 10 अंक का ही डालें।</div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div>
-                <label>दान राशि (₹) *</label>
-                <input type="number" id="amountInput" placeholder="₹ 0" min="1" max="9999" required />
-                <div class="field-error" id="amountError">❌ दान राशि ₹1 से ₹9999 के बीच होनी चाहिए।</div>
-              </div>
-              <div>
-                <label>UPI Reference Number *</label>
-                <input type="text" id="upiInput" placeholder="Enter UTR Number" maxlength="16" inputmode="numeric" autocomplete="off" required />
-                <div class="field-error" id="upiError">❌ UTR Number 12 से 16 अंकों का दर्ज करें।</div>
-              </div>
-            </div>
-
-            <label>पता *</label>
-            <textarea id="addressInput" rows="3" maxlength="300" placeholder="पूरा पता दर्ज करें" required></textarea>
-
-            <label>नोट (Optional)</label>
-            <textarea id="noteInput" rows="2" maxlength="300" placeholder="अपना संदेश लिखें"></textarea>
-
-            <label>प्रोफाइल फोटो (Optional)</label>
-            <div class="photo-upload">
-              <img id="photoPreview" alt="Preview" style="display:none" />
-              <div id="photoPlaceholder" class="photo-ph">👤</div>
-              <div>
-                <input type="file" id="photoInput" accept="image/*" hidden />
-                <button type="button" class="btn-photo" onclick="document.getElementById('photoInput').click()">📷 फोटो चुनें</button>
-                <button type="button" class="btn-photo-remove" id="photoRemove" style="display:none">✖ हटाएँ</button>
-                <div class="field-hint">फोटो अपने आप छोटी (compress) हो जाएगी</div>
-              </div>
-            </div>
-            <div class="field-error" id="photoError"></div>
-
-            <button type="submit" class="btn-submit" id="submitBtn">✅ DONATE</button>
-          </form>
-        </div>
-
-        <!-- DONOR LIST -->
-        <div class="mt-20">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:16px;gap:8px">
-            <h2 style="color:#ff7b00;font-size:20px">🏆 प्रमुख दानदाता 2026</h2>
-            <span style="font-size:12px;color:#999;background:#f5f5f7;padding:4px 14px;border-radius:20px" id="donorCount">0 दानदाता</span>
-          </div>
-          <div class="donor-list" id="donorList">
-            <div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SIDE COLUMN: VERIFY -->
-      <div class="col-side">
-        <div class="verify-box">
-          <h3>🔍 VERIFY DONATION</h3>
-          <p style="font-size:13px;color:#5a4a3a;margin-bottom:12px;text-align:center">
-            अपना UPI Reference Number डालकर स्थिति देखें और Receipt Download करें
-          </p>
-          <div class="verify-input">
-            <div style="flex:1;min-width:140px">
-              <input type="text" id="verifyInput" placeholder="Enter UTR Number" maxlength="16" inputmode="numeric" autocomplete="off" />
-              <div class="verify-error" id="verifyError">❌ UPI Reference Number 12 से 16 अंकों का दर्ज करें।</div>
-            </div>
-            <button class="btn-verify" id="verifyBtn">🔍 VERIFY</button>
-          </div>
-          <div class="verify-result" id="verifyResult"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- RECEIPT -->
-  <div id="receipt-container">
-    <div class="receipt-success-msg" id="receiptSuccessMsg">
-      ✅ आपका दान Verified है। कृपया receipt Download करें।
-    </div>
-    <div class="receipt-actions">
-      <button class="btn-print" onclick="window.print()">🖨️ Print Receipt</button>
-      <button class="btn-pdf" id="downloadPdfBtn">📄 Download Receipt</button>
-      <button class="btn-back" onclick="goBackToForm()">⬅️ Back to Form</button>
-    </div>
-    <div class="receipt-wrapper">
-      <div class="receipt" id="receiptContent"></div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="message">🌺 100% दान राशि धार्मिक एवं सामाजिक कार्यों हेतु उपयोग की जाएगी 🌺</div>
-    📞 जानकारी Submit करने से पहले अपनी जानकारी एक बार फिर जाँच लें।
-    <br />
-    ✉️ <a href="mailto:satyamraj0017@gmail.com">satyamraj0017@gmail.com</a>
-    <br />
-    📍 भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)
-  </div>
+  <div class="receipt-wrapper"><div class="receipt" id="receiptContent"></div></div>
 </div>
+
+<footer class="footer">
+  <div class="message">🌺 100% दान राशि धार्मिक एवं सामाजिक कार्यों हेतु उपयोग की जाएगी 🌺</div>
+  ✉️ <a href="mailto:satyamraj0017@gmail.com">satyamraj0017@gmail.com</a><br />
+  📍 भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)<br />
+  <small>🙏 जय श्री कृष्ण</small>
+</footer>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   FIREBASE CONFIG — Firebase Console → Project settings →
-   Your apps → Web app se ye 4 values copy karke yahan daalein
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ FIREBASE CONFIG — apiKey Console se copy karke paste karein ═══ */
 const firebaseConfig = {
-  apiKey: "<Console se copy karein>",
+  apiKey: "PASTE_YOUR_API_KEY_HERE",
   authDomain: "krishna-donation.firebaseapp.com",
   projectId: "krishna-donation",
   storageBucket: "krishna-donation.firebasestorage.app",
@@ -352,242 +323,168 @@ const db = firebase.firestore();
 db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 const WEB3FORMS_KEY = '3e53d31a-caa7-4d87-8337-a775f73e8d7b';
 
-/* ═══════════════════ HELPERS ═══════════════════ */
+/* ═══ HELPERS ═══ */
+const $ = id => document.getElementById(id);
 function numberToWords(num) {
   num = Math.floor(Number(num) || 0);
-  if (num === 0) return 'Zero Rupees Only';
+  if (!num) return 'Zero Rupees Only';
   const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
   const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
   const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-  function convert(n) {
+  function c(n) {
     let w = '';
-    if (n >= 10000000) { w += convert(Math.floor(n / 10000000)) + ' Crore '; n %= 10000000; }
-    if (n >= 100000) { w += convert(Math.floor(n / 100000)) + ' Lakh '; n %= 100000; }
-    if (n >= 1000) { w += convert(Math.floor(n / 1000)) + ' Thousand '; n %= 1000; }
-    if (n >= 100) { w += convert(Math.floor(n / 100)) + ' Hundred '; n %= 100; }
+    if (n >= 100000) { w += c(Math.floor(n / 100000)) + ' Lakh '; n %= 100000; }
+    if (n >= 1000) { w += c(Math.floor(n / 1000)) + ' Thousand '; n %= 1000; }
+    if (n >= 100) { w += c(Math.floor(n / 100)) + ' Hundred '; n %= 100; }
     if (n >= 20) { w += tens[Math.floor(n / 10)] + ' '; n %= 10; }
     else if (n >= 10) { w += teens[n - 10] + ' '; n = 0; }
     if (n > 0) w += ones[n] + ' ';
     return w.trim();
   }
-  return convert(num) + ' Rupees Only';
+  return c(num) + ' Rupees Only';
 }
-
-function formatDate(date) {
-  return new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-function formatDateTime(date) {
-  return new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-function escapeHtml(text) {
-  if (text === undefined || text === null) return '';
-  const div = document.createElement('div');
-  div.textContent = String(text);
-  return div.innerHTML;
+const formatDate = d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+const formatDateTime = d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+function escapeHtml(t) {
+  if (t === undefined || t === null) return '';
+  const d = document.createElement('div'); d.textContent = String(t); return d.innerHTML;
 }
 function showFieldError(input, errorEl, show) {
-  if (show) {
-    errorEl.classList.add('show');
-    input.style.borderColor = '#dc3545';
-    input.style.boxShadow = '0 0 0 4px rgba(220,53,69,.12)';
-  } else {
-    errorEl.classList.remove('show');
-    input.style.borderColor = '';
-    input.style.boxShadow = '';
-  }
+  errorEl.classList.toggle('show', show);
+  input.style.borderColor = show ? '#dc3545' : '';
+  input.style.boxShadow = show ? '0 0 0 4px rgba(220,53,69,.12)' : '';
 }
-
-// UTR ko hash karke document ID banate hain (public list me UTR leak nahi hota)
 async function hashUtr(utr) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('skjps:' + utr));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-/* ═══════════════════ VALIDATION ═══════════════════ */
+/* ═══ VALIDATION ═══ */
 const validateName = v => /^[A-Za-z\s]{4,18}$/.test(v.trim());
 const filterName = v => v.replace(/[^A-Za-z\s]/g, '');
 const validateMobile = v => /^[0-9]{10}$/.test(v.trim());
 const filterMobile = v => v.replace(/[^0-9]/g, '').slice(0, 10);
-const validateAmount = v => /^[0-9]+$/.test(v.trim()) && parseInt(v, 10) >= 1 && parseInt(v, 10) <= 9999;
-const filterAmount = v => v.replace(/[^0-9]/g, '');
+const validateAmount = v => /^[0-9]+$/.test(v.trim()) && +v >= 1 && +v <= 9999;
+const filterAmount = v => v.replace(/[^0-9]/g, '').slice(0, 4);
 const validateUpi = v => /^[0-9]{12,16}$/.test(v.trim());
 const filterUpi = v => v.replace(/[^0-9]/g, '').slice(0, 16);
 
-// Ek hi function se live validation lagate hain
-function bindField(input, errorEl, filter, validate, cap) {
-  const check = () => {
-    const v = input.value;
-    showFieldError(input, errorEl, v.length > 0 && !validate(v));
-  };
-  input.addEventListener('input', function () {
-    let f = filter(this.value);
-    if (cap && parseInt(f, 10) > cap) f = String(cap);
-    if (f !== this.value) this.value = f;
-    check();
-  });
+function bindField(input, errorEl, filter, validate) {
+  const check = () => showFieldError(input, errorEl, input.value.length > 0 && !validate(input.value));
+  input.addEventListener('input', function () { const f = filter(this.value); if (f !== this.value) this.value = f; check(); });
   input.addEventListener('blur', check);
   input.addEventListener('paste', function (e) {
     e.preventDefault();
-    let f = filter((e.clipboardData || window.clipboardData).getData('text'));
-    if (cap && parseInt(f, 10) > cap) f = String(cap);
-    this.value = f;
+    this.value = filter((e.clipboardData || window.clipboardData).getData('text'));
     check();
   });
 }
-
-const nameInput = document.getElementById('fullNameInput');
-const nameError = document.getElementById('nameError');
-const mobileInput = document.getElementById('mobileInput');
-const mobileError = document.getElementById('mobileError');
-const amountInput = document.getElementById('amountInput');
-const amountError = document.getElementById('amountError');
-const upiInput = document.getElementById('upiInput');
-const upiError = document.getElementById('upiError');
-const verifyInput = document.getElementById('verifyInput');
-const verifyError = document.getElementById('verifyError');
-
+const nameInput = $('fullNameInput'), nameError = $('nameError');
+const mobileInput = $('mobileInput'), mobileError = $('mobileError');
+const amountInput = $('amountInput'), amountError = $('amountError');
+const upiInput = $('upiInput'), upiError = $('upiError');
+const verifyInput = $('verifyInput'), verifyError = $('verifyError');
 bindField(nameInput, nameError, filterName, validateName);
 bindField(mobileInput, mobileError, filterMobile, validateMobile);
-bindField(amountInput, amountError, filterAmount, validateAmount, 9999);
+bindField(amountInput, amountError, filterAmount, validateAmount);
 bindField(upiInput, upiError, filterUpi, validateUpi);
 bindField(verifyInput, verifyError, filterUpi, validateUpi);
 
-/* ═══════════════════ PHOTO UPLOAD (120x120 compress) ═══════════════════ */
+/* ═══ PHOTO UPLOAD ═══ */
 let photoData = '';
-const photoInput = document.getElementById('photoInput');
-const photoPreview = document.getElementById('photoPreview');
-const photoPlaceholder = document.getElementById('photoPlaceholder');
-const photoRemove = document.getElementById('photoRemove');
-const photoError = document.getElementById('photoError');
+const photoInput = $('photoInput'), photoPreview = $('photoPreview'), photoPlaceholder = $('photoPlaceholder'),
+  photoRemove = $('photoRemove'), photoError = $('photoError');
 
 function compressImage(file, size = 120) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
     img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = c.height = size;
+      const c = document.createElement('canvas'); c.width = c.height = size;
       const s = Math.min(img.width, img.height);
       c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
-      URL.revokeObjectURL(url);
-      resolve(c.toDataURL('image/jpeg', 0.75));
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.75));
     };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('bad image')); };
     img.src = url;
   });
 }
-
 function clearPhoto() {
-  photoData = '';
-  photoInput.value = '';
-  photoPreview.style.display = 'none';
-  photoPlaceholder.style.display = 'flex';
-  photoRemove.style.display = 'none';
+  photoData = ''; photoInput.value = '';
+  photoPreview.style.display = 'none'; photoPlaceholder.style.display = 'flex'; photoRemove.style.display = 'none';
 }
-
 photoInput.addEventListener('change', async function () {
   const file = this.files[0];
   photoError.classList.remove('show');
   if (!file) return;
   if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
-    photoError.textContent = '❌ कृपया 5MB से छोटी image (JPG/PNG) चुनें।';
-    photoError.classList.add('show');
-    clearPhoto();
-    return;
+    photoError.textContent = '❌ कृपया 5MB से छोटी image (JPG/PNG) चुनें।'; photoError.classList.add('show'); clearPhoto(); return;
   }
   try {
     photoData = await compressImage(file);
-    photoPreview.src = photoData;
-    photoPreview.style.display = 'block';
-    photoPlaceholder.style.display = 'none';
-    photoRemove.style.display = 'inline-block';
+    photoPreview.src = photoData; photoPreview.style.display = 'block';
+    photoPlaceholder.style.display = 'none'; photoRemove.style.display = 'inline-block';
   } catch (e) {
-    photoError.textContent = '❌ फोटो लोड नहीं हो सकी।';
-    photoError.classList.add('show');
-    clearPhoto();
+    photoError.textContent = '❌ फोटो लोड नहीं हो सकी।'; photoError.classList.add('show'); clearPhoto();
   }
 });
 photoRemove.addEventListener('click', clearPhoto);
 
-/* ═══════════════════ LIVE DONOR LIST ═══════════════════ */
-let allDonors = [];
-let highlightId = null;
+/* ═══ LIVE DONOR LIST + STATS ═══ */
+let allDonors = [], highlightId = null;
 
 function renderDonorList(searchId) {
   if (searchId !== undefined) highlightId = searchId;
-  const list = document.getElementById('donorList');
-  const countEl = document.getElementById('donorCount');
+  const list = $('donorList');
 
-  if (!allDonors.length) {
-    list.innerHTML = '<div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div>';
-    countEl.textContent = '0 दानदाता';
-    return;
-  }
+  const ver = allDonors.filter(d => d.status === 'verified');
+  $('statCount').textContent = allDonors.length;
+  $('statVerified').textContent = ver.length;
+  $('statAmount').textContent = '₹' + ver.reduce((s, d) => s + (Number(d.amount) || 0), 0).toLocaleString('en-IN');
+  $('donorCount').textContent = `${allDonors.length} दानदाता`;
+
+  if (!allDonors.length) { list.innerHTML = '<div class="empty-donors">कोई दानदाता नहीं। पहले दान करें!</div>'; return; }
 
   const sorted = [...allDonors];
   if (highlightId) {
-    const idx = sorted.findIndex(d => d.id === highlightId);
-    if (idx > 0) sorted.unshift(sorted.splice(idx, 1)[0]);
+    const i = sorted.findIndex(d => d.id === highlightId);
+    if (i > 0) sorted.unshift(sorted.splice(i, 1)[0]);
   }
-
   list.innerHTML = sorted.map((d, i) => {
-    const verified = d.status === 'verified';
+    const v = d.status === 'verified';
     const date = d.createdAt && d.createdAt.toDate ? formatDate(d.createdAt.toDate()) : formatDate(new Date());
-    const avatar = d.photo ||
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(d.fullName)}&background=f5b042&color=fff&size=64&bold=true`;
-    const hl = (highlightId && d.id === highlightId) ? 'highlight-card' : '';
-    return `
-      <div class="donor-card ${verified ? 'is-verified' : 'is-pending'} ${hl}">
-        <span class="sno">#${i + 1}</span>
-        <img src="${escapeHtml(avatar)}" alt="${escapeHtml(d.fullName)}" />
-        <div class="info">
-          <h3>${escapeHtml(d.fullName)}
-            <span class="status-badge ${verified ? 'verified' : 'pending'}">${verified ? '✅ Verified' : '⏳ Pending'}</span>
-          </h3>
-          <p>₹ ${Number(d.amount).toLocaleString('en-IN')}</p>
-          <div class="donor-date">📅 ${date}</div>
-        </div>
-      </div>`;
+    const avatar = d.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.fullName)}&background=f28c0f&color=fff&size=64&bold=true`;
+    const hl = highlightId && d.id === highlightId ? 'highlight-card' : '';
+    return `<div class="donor-card ${v ? 'is-verified' : 'is-pending'} ${hl}">
+      <span class="sno">#${i + 1}</span>
+      <img src="${escapeHtml(avatar)}" alt="${escapeHtml(d.fullName)}" />
+      <div class="info">
+        <h3>${escapeHtml(d.fullName)}<span class="status-badge ${v ? 'verified' : 'pending'}">${v ? '✅ Verified' : '⏳ Pending'}</span></h3>
+        <p>₹ ${Number(d.amount).toLocaleString('en-IN')}</p>
+        <div class="donor-date">📅 ${date}</div>
+      </div></div>`;
   }).join('');
 
-  countEl.textContent = `${allDonors.length} दानदाता`;
-
   if (highlightId && searchId !== undefined) {
-    setTimeout(() => {
-      const h = list.querySelector('.highlight-card');
-      if (h) h.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 200);
+    setTimeout(() => { const h = list.querySelector('.highlight-card'); if (h) h.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
   }
 }
-
 db.collection('donors').orderBy('createdAt', 'desc').limit(50).onSnapshot(
-  snap => {
-    allDonors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderDonorList();
-  },
+  snap => { allDonors = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderDonorList(); },
   err => console.error('Donor list error:', err)
 );
 
-/* ═══════════════════ RECEIPT ═══════════════════ */
+/* ═══ RECEIPT ═══ */
 function buildReceipt(data) {
-  const now = new Date();
   const amount = parseFloat(data.amount) || 0;
   return `
-    <div class="receipt-header">
-      <div class="receipt-logo">
-        <img src="logo.png" alt="Logo" />
-        <div class="logo-text">
-          SHREE KRISHNA JANMASHTAMI PUJA SAMITI
-          <small>Bhadir, Muhammadabad Gohana, Mau (U.P.)</small>
-        </div>
-      </div>
-    </div>
-
+    <div class="receipt-header"><div class="receipt-logo">
+      <img src="logo.png" alt="Logo" />
+      <div class="logo-text">SHREE KRISHNA JANMASHTAMI PUJA SAMITI<small>Bhadir, Muhammadabad Gohana, Mau (U.P.)</small></div>
+    </div></div>
     <div class="receipt-meta-row">
       <span><strong>Receipt No.</strong> ${escapeHtml(data.receiptNumber)}</span>
       <span><strong>Donation Date</strong> ${escapeHtml(data.donationDate)}</span>
     </div>
-
     <div class="receipt-body">
       <div class="field-row"><span class="label">Donor Name</span><span class="value">${escapeHtml(data.fullName)}</span></div>
       <div class="field-row"><span class="label">Mobile Number</span><span class="value">${escapeHtml(data.mobile)}</span></div>
@@ -596,106 +493,74 @@ function buildReceipt(data) {
       <div class="field-row field-row-words"><span class="label">Amount in Words</span><span class="value">${numberToWords(amount)}</span></div>
       <div class="field-row"><span class="label">UPI Reference No.</span><span class="value">${escapeHtml(data.upiReference)}</span></div>
     </div>
-
-    <div class="receipt-thankyou">
-      🙏 Thank you for your valuable contribution to<br />Shree Krishna Janmashtami Puja Samiti.
-    </div>
-
+    <div class="receipt-thankyou">🙏 Thank you for your valuable contribution to<br />Shree Krishna Janmashtami Puja Samiti.</div>
     <div class="receipt-signature">
       <div class="sig-label">Verified By</div>
       <div class="sig-sub">(Shree Krishna Janmashtami Puja Samiti)<br />Committee Administrator</div>
       <div class="signature-seal-row">
-        <img src="images/signature.png" class="sig-image" alt="Committee Administrator Signature" />
-        <img src="images/seal.png" class="seal-image" alt="Committee Seal" />
+        <img src="images/signature.png" class="sig-image" alt="Signature" />
+        <img src="images/seal.png" class="seal-image" alt="Seal" />
       </div>
     </div>
-
     <div class="receipt-footer">
-      <div class="downloaded-on">📥 Downloaded On : ${formatDateTime(now)}</div>
+      <div class="downloaded-on">📥 Downloaded On : ${formatDateTime(new Date())}</div>
       <div class="disclaimer">This receipt is computer generated and does not require a physical signature.</div>
     </div>
     <div class="shri-krishna-ornament">🕉️ ॐ 🕉️</div>`;
 }
-
 function showReceipt(data) {
-  const container = document.getElementById('receipt-container');
-  document.getElementById('receiptSuccessMsg').classList.add('show');
-  document.getElementById('receiptContent').innerHTML = buildReceipt(data);
-  container.style.display = 'block';
-  setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+  const c = $('receipt-container');
+  $('receiptSuccessMsg').classList.add('show');
+  $('receiptContent').innerHTML = buildReceipt(data);
+  c.style.display = 'block';
+  setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
 }
-
 function goBackToForm() {
-  document.getElementById('receipt-container').style.display = 'none';
-  document.getElementById('receiptSuccessMsg').classList.remove('show');
-  document.getElementById('main-form-section').scrollIntoView({ behavior: 'smooth' });
+  $('receipt-container').style.display = 'none';
+  $('receiptSuccessMsg').classList.remove('show');
+  $('main-form-section').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* ═══════════════════ VERIFY DONATION ═══════════════════ */
+/* ═══ VERIFY DONATION ═══ */
 let _verifiedData = null;
-
-document.getElementById('verifyBtn').addEventListener('click', async function () {
-  const ref = verifyInput.value.trim();
-  const resultDiv = document.getElementById('verifyResult');
-
-  document.getElementById('receipt-container').style.display = 'none';
-
+$('verifyBtn').addEventListener('click', async function () {
+  const ref = verifyInput.value.trim(), resultDiv = $('verifyResult');
+  $('receipt-container').style.display = 'none';
   if (!validateUpi(ref)) {
     showFieldError(verifyInput, verifyError, true);
-    resultDiv.className = 'verify-result';
-    resultDiv.style.display = 'none';
-    return;
+    resultDiv.className = 'verify-result'; resultDiv.style.display = 'none'; return;
   }
   showFieldError(verifyInput, verifyError, false);
-
-  const btn = this;
-  btn.disabled = true;
+  const btn = this; btn.disabled = true;
   try {
     const id = await hashUtr(ref);
     const snap = await db.collection('donors').doc(id).get();
-
     if (!snap.exists) {
       resultDiv.className = 'verify-result error';
-      resultDiv.innerHTML = `<div class="vr-title">❌ Donation Not Found</div>
-        <div class="vr-detail">इस UPI Reference Number से कोई record नहीं मिला।</div>`;
+      resultDiv.innerHTML = `<div class="vr-title">❌ Donation Not Found</div><div class="vr-detail">इस UPI Reference Number से कोई record नहीं मिला।</div>`;
       return;
     }
-
     const d = snap.data();
     renderDonorList(id);
-
     if (d.status !== 'verified') {
       resultDiv.className = 'verify-result pending';
-      resultDiv.innerHTML = `<div class="vr-title">⏳ Verification Pending</div>
-        <div class="vr-detail">${escapeHtml(d.fullName)} जी, आपका दान दर्ज है। Verify होने के बाद यहीं से Receipt Download कर सकेंगे।</div>`;
+      resultDiv.innerHTML = `<div class="vr-title">⏳ Verification Pending</div><div class="vr-detail">${escapeHtml(d.fullName)} जी, आपका दान दर्ज है। Verify होने के बाद यहीं से Receipt Download कर सकेंगे।</div>`;
       return;
     }
-
     const pSnap = await db.collection('donations_private').doc(id).get();
     const p = pSnap.exists ? pSnap.data() : {};
     const date = d.createdAt && d.createdAt.toDate ? formatDate(d.createdAt.toDate()) : formatDate(new Date());
-
     _verifiedData = {
-      fullName: d.fullName,
-      mobile: p.mobile || '-',
-      address: p.address || '-',
-      amount: d.amount,
-      upiReference: ref,
-      donationDate: date,
+      fullName: d.fullName, mobile: p.mobile || '-', address: p.address || '-', amount: d.amount,
+      upiReference: ref, donationDate: date,
       receiptNumber: d.receiptNumber || ('SKJPS-' + id.slice(0, 8).toUpperCase())
     };
-
-    const avatar = d.photo ||
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(d.fullName)}&background=28a745&color=fff&size=80&bold=true`;
-
+    const avatar = d.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.fullName)}&background=1e8e4e&color=fff&size=80&bold=true`;
     resultDiv.className = 'verify-result success';
     resultDiv.innerHTML = `
       <div class="vr-title">✅ Donation Verified <span class="badge">VERIFIED</span></div>
       <div class="vr-detail">
-        <div class="vr-photo-wrap">
-          <img src="${escapeHtml(avatar)}" alt="" />
-          <span class="vr-name-big">${escapeHtml(d.fullName)}</span>
-        </div>
+        <div class="vr-photo-wrap"><img src="${escapeHtml(avatar)}" alt="" /><span class="vr-name-big">${escapeHtml(d.fullName)}</span></div>
         <strong>Donation Amount :</strong> ₹${Number(d.amount).toLocaleString('en-IN')}<br />
         <strong>Amount in Words :</strong> <span class="amount-words">${numberToWords(d.amount)}</span><br />
         <strong>Donation Date :</strong> ${date}<br />
@@ -707,34 +572,20 @@ document.getElementById('verifyBtn').addEventListener('click', async function ()
     resultDiv.className = 'verify-result error';
     resultDiv.innerHTML = `<div class="vr-title">❌ Error</div><div class="vr-detail">कृपया पुनः प्रयास करें।</div>`;
   } finally {
-    resultDiv.style.display = 'block';
-    btn.disabled = false;
+    resultDiv.style.display = 'block'; btn.disabled = false;
   }
 });
+verifyInput.addEventListener('keydown', e => { if (e.key === 'Enter') $('verifyBtn').click(); });
 
-verifyInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('verifyBtn').click();
-});
-
-/* ═══════════════════ FORM SUBMIT ═══════════════════ */
-const form = document.getElementById('donationForm');
-const submitBtn = document.getElementById('submitBtn');
-const successMsg = document.getElementById('formSuccessMsg');
-const errorMsg = document.getElementById('formErrorMsg');
-const addressInput = document.getElementById('addressInput');
-const noteInput = document.getElementById('noteInput');
+/* ═══ FORM SUBMIT ═══ */
+const form = $('donationForm'), submitBtn = $('submitBtn'), successMsg = $('formSuccessMsg'), errorMsg = $('formErrorMsg');
+const addressInput = $('addressInput'), noteInput = $('noteInput');
 
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
-  successMsg.style.display = 'none';
-  errorMsg.style.display = 'none';
-
-  const name = nameInput.value.trim();
-  const phone = mobileInput.value.trim();
-  const address = addressInput.value.trim();
-  const amount = amountInput.value.trim();
-  const upi = upiInput.value.trim();
-  const note = noteInput.value.trim();
+  successMsg.style.display = 'none'; errorMsg.style.display = 'none';
+  const name = nameInput.value.trim(), phone = mobileInput.value.trim(), address = addressInput.value.trim(),
+    amount = amountInput.value.trim(), upi = upiInput.value.trim(), note = noteInput.value.trim();
 
   let hasError = false;
   const chk = (ok, input, err) => { showFieldError(input, err, !ok); if (!ok) hasError = true; };
@@ -742,120 +593,85 @@ form.addEventListener('submit', async function (e) {
   chk(validateMobile(phone), mobileInput, mobileError);
   chk(validateAmount(amount), amountInput, amountError);
   chk(validateUpi(upi), upiInput, upiError);
-  if (!address) {
-    errorMsg.textContent = '❌ कृपया पता दर्ज करें।';
-    errorMsg.style.display = 'block';
-    hasError = true;
-  }
-
+  if (!address) { errorMsg.textContent = '❌ कृपया पता दर्ज करें।'; errorMsg.style.display = 'block'; hasError = true; }
   if (hasError) {
-    const target = document.querySelector('.field-error.show') || errorMsg;
-    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    (document.querySelector('.field-error.show') || errorMsg).scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="loader"></span> Submitting...';
-
   try {
     const id = await hashUtr(upi);
     const ts = firebase.firestore.FieldValue.serverTimestamp();
-
     const pub = { fullName: name, amount: parseInt(amount, 10), status: 'pending', createdAt: ts };
     if (photoData) pub.photo = photoData;
 
     const batch = db.batch();
     batch.set(db.collection('donors').doc(id), pub);
-    batch.set(db.collection('donations_private').doc(id), {
-      mobile: phone, address: address, note: note, createdAt: ts
-    });
-  await Promise.race([
-  batch.commit(),
-  new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), 15000))
-]);
+    batch.set(db.collection('donations_private').doc(id), { mobile: phone, address: address, note: note, createdAt: ts });
+    await Promise.race([batch.commit(), new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), 15000))]);
 
-    // Admin ko email (optional — fail ho to koi dikkat nahi)
     fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: WEB3FORMS_KEY,
-        'Full Name': name, 'Mobile Number': phone, 'Full Address': address,
-        'Donation Amount': amount, 'UPI Reference Number': upi,
-        'Note': note || '—', 'Status': 'PENDING - Firestore me verify karein'
+        access_key: WEB3FORMS_KEY, 'Full Name': name, 'Mobile Number': phone, 'Full Address': address,
+        'Donation Amount': amount, 'UPI Reference Number': upi, 'Note': note || '—',
+        'Status': 'PENDING - Firestore me verify karein'
       })
     }).catch(() => {});
 
-    successMsg.textContent = '✅ आपका दान दर्ज हो गया और सूची में दिख रहा है (⏳ Pending)। Verify होने के बाद "VERIFY DONATION" में अपना UTR डालकर Receipt Download करें।';
+    successMsg.textContent = '✅ आपका दान दर्ज हो गया और सूची में दिख रहा है (⏳ Pending)। Verify होने के बाद "Verify Donation" में अपना UTR डालकर Receipt Download करें।';
     successMsg.style.display = 'block';
     successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    form.reset();
-    clearPhoto();
-    renderDonorList(id);
+    form.reset(); clearPhoto(); renderDonorList(id);
   } catch (err) {
     console.error('Submission error:', err);
     errorMsg.textContent =
-  err.code === 'timeout' ? '❌ Server se connect nahi ho paya। Firebase config/database check karein।' :
-  err.code === 'permission-denied' ? '❌ यह UPI Reference Number पहले से दर्ज है या जानकारी गलत है।' :
-  '❌ Network Error कृपया पुनः प्रयास करें।';
+      err.code === 'timeout' ? '❌ Server से connect नहीं हो पाया। Firebase config/database check करें।' :
+      err.code === 'permission-denied' ? '❌ यह UPI Reference Number पहले से दर्ज है या जानकारी गलत है।' :
+      '❌ Network Error कृपया पुनः प्रयास करें।';
     errorMsg.style.display = 'block';
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '✅ DONATE';
+    submitBtn.disabled = false; submitBtn.innerHTML = '🙏 DONATE करें';
   }
 });
 
-/* ═══════════════════ PDF DOWNLOAD (A4) ═══════════════════ */
-document.getElementById('downloadPdfBtn').addEventListener('click', function () {
-  const btn = this;
-  const loading = document.getElementById('pdfLoading');
-  const receiptEl = document.getElementById('receiptContent');
+/* ═══ PDF DOWNLOAD (A4) ═══ */
+$('downloadPdfBtn').addEventListener('click', function () {
+  const btn = this, loading = $('pdfLoading');
+  loading.classList.add('show'); btn.textContent = '⏳ Generating...'; btn.disabled = true;
+  const done = () => { loading.classList.remove('show'); btn.textContent = '📄 Download Receipt'; btn.disabled = false; };
 
-  loading.classList.add('show');
-  btn.textContent = '⏳ Generating...';
-  btn.disabled = true;
-
-  const done = () => {
-    loading.classList.remove('show');
-    btn.textContent = '📄 Download Receipt';
-    btn.disabled = false;
-  };
-
-  setTimeout(function () {
-    const clone = receiptEl.cloneNode(true);
+  setTimeout(() => {
+    const clone = $('receiptContent').cloneNode(true);
     const st = {
       'width': '794px', 'height': '1123px', 'min-width': '794px', 'min-height': '1123px', 'max-width': '794px',
-      'padding': '38px 45px', 'margin': '0', 'border-radius': '0', 'box-shadow': 'none',
-      'background': '#fff', 'border': '1.5px solid #d4a017', 'font-size': '12px', 'line-height': '1.6',
-      'display': 'block', 'box-sizing': 'border-box', 'position': 'absolute', 'left': '0', 'top': '0'
+      'padding': '38px 45px', 'margin': '0', 'box-shadow': 'none', 'background': '#fff',
+      'border': '1.5px solid #d4a017', 'font-size': '12px', 'display': 'block', 'box-sizing': 'border-box',
+      'position': 'absolute', 'left': '0', 'top': '0'
     };
     Object.keys(st).forEach(k => clone.style.setProperty(k, st[k], 'important'));
     clone.id = 'cloneForPdf';
     document.body.appendChild(clone);
-
     setTimeout(() => {
-      html2canvas(clone, {
-        scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false,
-        width: 794, height: 1123, windowWidth: 794, windowHeight: 1123
-      }).then(function (canvas) {
-        document.body.removeChild(clone);
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
-        pdf.save('Donation_Receipt.pdf');
-        done();
-      }).catch(function (err) {
-        console.error('html2canvas error:', err);
-        if (document.getElementById('cloneForPdf')) document.body.removeChild(clone);
-        done();
-        alert('PDF generation failed. Please use Print → Save as PDF.');
-      });
+      html2canvas(clone, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#fff', logging: false,
+        width: 794, height: 1123, windowWidth: 794, windowHeight: 1123 })
+        .then(canvas => {
+          document.body.removeChild(clone);
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+          pdf.save('Donation_Receipt.pdf'); done();
+        })
+        .catch(err => {
+          console.error(err);
+          if ($('cloneForPdf')) document.body.removeChild(clone);
+          done(); alert('PDF generation failed. Please use Print → Save as PDF.');
+        });
     }, 400);
   }, 300);
 });
-
-console.log('🙏 Jai Shree Krishna');
 </script>
 </body>
 </html>
