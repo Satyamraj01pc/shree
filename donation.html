@@ -15,10 +15,22 @@
 html{scroll-behavior:smooth}
 body{background:var(--cream);color:var(--ink);min-height:100vh}
 
+/* TOP BAR */
+.topbar{background:linear-gradient(135deg,#3f0a16,var(--mar) 55%,var(--mar2));border-bottom:4px solid var(--gold);position:sticky;top:0;z-index:100;box-shadow:0 6px 22px rgba(0,0,0,.28)}
+.tb-in{max-width:1120px;margin:0 auto;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tb-brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+.tb-brand img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);flex-shrink:0}
+.tb-brand b{display:block;color:#fff;font-family:'Tiro Devanagari Hindi','Poppins',serif;font-weight:400;font-size:21px;line-height:1.2}
+.tb-brand small{color:#f3d9c4;font-size:12px}
+.tb-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-sec{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:30px;font-size:12px;font-weight:500}
+.tb-home{background:linear-gradient(90deg,var(--saf),var(--gold));color:#fff;text-decoration:none;padding:8px 18px;border-radius:30px;font-size:13.5px;font-weight:700;box-shadow:0 5px 14px rgba(242,140,15,.4);transition:.25s}
+.tb-home:hover{transform:translateY(-2px)}
 /* HERO */
-.hero{background:radial-gradient(circle at 20% 10%,rgba(242,140,15,.35),transparent 45%),radial-gradient(circle at 85% 90%,rgba(230,180,34,.25),transparent 40%),linear-gradient(135deg,var(--mar),var(--mar2));color:#fff;text-align:center;padding:48px 20px 110px;position:relative;overflow:hidden}
+.hero{background:radial-gradient(circle at 20% 10%,rgba(242,140,15,.35),transparent 45%),radial-gradient(circle at 85% 90%,rgba(230,180,34,.25),transparent 40%),linear-gradient(135deg,var(--mar),var(--mar2));color:#fff;text-align:center;padding:34px 20px 100px;position:relative;overflow:hidden}
 .hero::after{content:"ॐ";position:absolute;right:-20px;top:-40px;font-size:260px;opacity:.06;font-family:'Tiro Devanagari Hindi',serif;line-height:1}
 .hero .om{font-size:38px}
+.hero .hl{width:92px;height:92px;border-radius:50%;object-fit:cover;border:4px solid var(--gold);background:#fff;box-shadow:0 10px 28px rgba(0,0,0,.4);display:block;margin:0 auto 8px}
 .hero h1{font-family:'Tiro Devanagari Hindi','Poppins',serif;font-size:clamp(24px,5vw,42px);font-weight:400;margin:6px 0;letter-spacing:.5px}
 .hero p{opacity:.9;font-size:14px}
 .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
@@ -71,7 +83,7 @@ textarea{resize:vertical}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .success-msg,.error-msg{padding:12px 16px;border-radius:12px;margin:14px 0;font-weight:500;font-size:13.5px;display:none}
-.success-msg{background:#e4f6ea;color:#14532d;border-left:4px solid var(--ok)}
+.success-msg{background:#e4f6ea;color:#14532d;border-left:4px solid var(--ok);animation:fadeUp .4s;line-height:1.6}.success-msg b{display:block;font-size:15px;margin-bottom:2px}
 .error-msg{background:#fde8e8;color:#7f1d1d;border-left:4px solid #dc3545}
 
 /* PHOTO */
@@ -131,7 +143,8 @@ textarea{resize:vertical}
 .btn-print{background:#1f2937}.btn-pdf{background:#c0392b}.btn-back{background:#7f8c8d}
 .receipt-actions button:hover{transform:translateY(-2px)}
 .receipt-wrapper{display:flex;justify-content:center}
-.receipt{width:148mm;min-height:210mm;background:#fff;padding:8mm 10mm;box-shadow:0 12px 40px rgba(0,0,0,.16);border:2px solid #d4a017;font-size:11.5px;line-height:1.6;color:#1e1e2a}
+.receipt{width:140mm;max-width:100%;background:#fff;padding:7mm 8mm;box-shadow:0 12px 40px rgba(0,0,0,.16);border:2px solid #d4a017;border-radius:6px;font-size:11.5px;line-height:1.55;color:#1e1e2a}
+.receipt-title{text-align:center;font-weight:700;letter-spacing:3px;font-size:12px;color:#fff;background:linear-gradient(90deg,#b45309,#d4a017);padding:4px 0;border-radius:4px;margin-bottom:10px}
 .receipt-header{text-align:center;border-bottom:2px solid #d4a017;padding-bottom:10px;margin-bottom:10px}
 .receipt-logo{display:flex;align-items:center;justify-content:center;gap:12px}
 .receipt-logo img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #d4a017;background:#f5f0e8}
@@ -155,16 +168,22 @@ textarea{resize:vertical}
 .receipt-footer{margin-top:8px;padding-top:8px;border-top:1px solid #f0e6d0;font-size:8.5px;color:#7a6a5a;text-align:center;line-height:1.6}
 .downloaded-on{font-weight:500;color:#4a3a2a;font-size:9px}.disclaimer{font-style:italic;font-size:8px}
 .shri-krishna-ornament{font-size:18px;text-align:center;opacity:.08;letter-spacing:6px;color:#b45309}
+.rc-main{display:flex;gap:14px;align-items:flex-start;margin:4px 0 6px}
+.rc-photo{text-align:center;flex-shrink:0;width:92px}
+.rc-photo img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid #d4a017;display:block;margin:0 auto;background:#fff}
+.vb{display:inline-block;margin-top:7px;background:#1e8e4e;color:#fff;font-size:9.5px;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:.5px}
+.rc-f{flex:1;min-width:0}.rc-f .field-row .label{width:92px}
 
 .pdf-loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;justify-content:center;align-items:center;flex-direction:column;color:#fff;font-size:18px;font-weight:600}
 .pdf-loading .spinner{width:48px;height:48px;border:5px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-bottom:16px}
 .pdf-loading.show{display:flex}
 
+@page{size:A4;margin:12mm}
 @media print{
   body{background:#fff!important}
-  .hero,.wrap,.footer,.receipt-actions,.receipt-success-msg{display:none!important}
+  .topbar,.hero,.wrap,.footer,.receipt-actions,.receipt-success-msg{display:none!important}
   #receipt-container{display:block!important;padding:0!important;background:#fff!important}
-  .receipt{box-shadow:none!important;margin:0 auto!important;font-size:10.5px!important}
+  .receipt{box-shadow:none!important;margin:0 auto!important;width:140mm!important;font-size:10.5px!important}
 }
 @media(max-width:900px){
   .grid{grid-template-columns:1fr;grid-template-areas:"qr" "form" "verify" "list"}
@@ -173,6 +192,7 @@ textarea{resize:vertical}
   .card{padding:20px 16px}
 }
 @media(max-width:640px){
+  .tb-sec{display:none}.tb-brand img{width:42px;height:42px}.tb-brand b{font-size:15px}.tb-brand small{font-size:10.5px}.tb-in{padding:8px 12px}.tb-home{padding:7px 14px;font-size:12.5px}
   .receipt{width:100%!important;min-height:auto!important;padding:6mm!important;font-size:10.5px!important}
   .field-row .label{width:90px!important;font-size:10px!important}
   .logo-text{font-size:13px!important}.receipt-logo img{width:38px!important;height:38px!important}
@@ -184,11 +204,20 @@ textarea{resize:vertical}
 
 <div class="pdf-loading" id="pdfLoading"><div class="spinner"></div><span>⏳ Receipt PDF तैयार हो रहा है...</span></div>
 
+<nav class="topbar">
+  <div class="tb-in">
+    <a class="tb-brand" href="index.html">
+      <img src="logo.png" alt="लोगो" onerror="this.style.display='none'">
+      <div><b>श्री कृष्ण जन्माष्टमी पूजा समिति</b><small>📍 भदीड़, मुहम्मदाबाद गोहना, मऊ</small></div>
+    </a>
+    <div class="tb-r"><span class="tb-sec">🔒 Secure Portal</span><a class="tb-home" href="index.html">🏠 Home</a></div>
+  </div>
+</nav>
 <header class="hero">
-  <div class="om">🌺</div>
-  <h1>श्री कृष्ण जन्माष्टमी पूजा समिति</h1>
-  <p>📍 भदीड़, मुहम्मदाबाद गोहना, मऊ (उत्तर प्रदेश)</p>
-  <div class="badges"><span>🔒 Secure Donation Portal</span><span>✅ Verified Receipt</span><span>🙏 100% सेवा कार्य हेतु</span></div>
+  <img class="hl" src="logo.png" alt="लोगो" onerror="this.style.display='none'">
+  <h1>दान एवं सहयोग</h1>
+  <p>आपका छोटा सा सहयोग जन्माष्टमी महोत्सव को भव्य बनाता है</p>
+  <div class="badges"><span>🔒 Secure Donation</span><span>✅ Verified Receipt</span><span>🙏 100% सेवा कार्य हेतु</span></div>
 </header>
 
 <div class="wrap">
@@ -216,9 +245,6 @@ textarea{resize:vertical}
     <section class="card a-form" id="main-form-section">
       <h2>📝 दान की जानकारी</h2>
       <p class="sub">सभी * वाले फ़ील्ड ज़रूरी हैं। Submit से पहले जानकारी एक बार जाँच लें।</p>
-      <div id="formSuccessMsg" class="success-msg"></div>
-      <div id="formErrorMsg" class="error-msg">❌ Something Wrong कृपया पुनः प्रयास करें।</div>
-
       <form id="donationForm" novalidate>
         <div class="form-row">
           <div>
@@ -240,8 +266,8 @@ textarea{resize:vertical}
           </div>
           <div>
             <label>UPI Reference Number (UTR) <em>*</em></label>
-            <input type="text" id="upiInput" placeholder="12 अंकों का UTR नंबर" maxlength="16" inputmode="numeric" autocomplete="off" required />
-            <div class="field-error" id="upiError">❌ UTR Number 12 से 16 अंकों का दर्ज करें।</div>
+            <input type="text" id="upiInput" placeholder="12 अंकों का UTR नंबर" maxlength="12" inputmode="numeric" autocomplete="off" required />
+            <div class="field-error" id="upiError">❌ UTR Number ठीक 12 अंकों का होना चाहिए।</div>
           </div>
         </div>
 
@@ -265,6 +291,8 @@ textarea{resize:vertical}
         <div class="field-error" id="photoError"></div>
 
         <button type="submit" class="btn-submit" id="submitBtn">🙏 DONATE करें</button>
+        <div id="formSuccessMsg" class="success-msg" role="status"></div>
+        <div id="formErrorMsg" class="error-msg" role="alert"></div>
       </form>
     </section>
 
@@ -273,8 +301,8 @@ textarea{resize:vertical}
       <p class="sub">अपना UTR नंबर डालकर स्थिति देखें और Verified होने पर Receipt Download करें।</p>
       <div class="verify-input">
         <div>
-          <input type="text" id="verifyInput" placeholder="Enter UTR Number" maxlength="16" inputmode="numeric" autocomplete="off" />
-          <div class="verify-error" id="verifyError">❌ UTR Number 12 से 16 अंकों का दर्ज करें।</div>
+          <input type="text" id="verifyInput" placeholder="Enter UTR Number" maxlength="12" inputmode="numeric" autocomplete="off" />
+          <div class="verify-error" id="verifyError">❌ UTR Number ठीक 12 अंकों का होना चाहिए।</div>
         </div>
         <button class="btn-verify" id="verifyBtn">🔍 VERIFY</button>
       </div>
@@ -366,8 +394,8 @@ const validateMobile = v => /^[0-9]{10}$/.test(v.trim());
 const filterMobile = v => v.replace(/[^0-9]/g, '').slice(0, 10);
 const validateAmount = v => /^[0-9]+$/.test(v.trim()) && +v >= 1 && +v <= 9999;
 const filterAmount = v => v.replace(/[^0-9]/g, '').slice(0, 4);
-const validateUpi = v => /^[0-9]{12,16}$/.test(v.trim());
-const filterUpi = v => v.replace(/[^0-9]/g, '').slice(0, 16);
+const validateUpi = v => /^[0-9]{12}$/.test(v.trim());
+const filterUpi = v => v.replace(/[^0-9]/g, '').slice(0, 12);
 
 function bindField(input, errorEl, filter, validate) {
   const check = () => showFieldError(input, errorEl, input.value.length > 0 && !validate(input.value));
@@ -474,24 +502,40 @@ db.collection('donors').orderBy('createdAt', 'desc').limit(50).onSnapshot(
 );
 
 /* ═══ RECEIPT ═══ */
+function avatarDataUrl(name) {
+  const c = document.createElement('canvas'); c.width = c.height = 160;
+  const x = c.getContext('2d');
+  x.fillStyle = '#f28c0f'; x.fillRect(0, 0, 160, 160);
+  x.fillStyle = '#fff'; x.font = 'bold 64px Poppins, Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const ini = (name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  x.fillText(ini, 80, 86);
+  return c.toDataURL('image/png');
+}
 function buildReceipt(data) {
   const amount = parseFloat(data.amount) || 0;
+  const photo = data.photo || avatarDataUrl(data.fullName);
   return `
     <div class="receipt-header"><div class="receipt-logo">
       <img src="logo.png" alt="Logo" />
       <div class="logo-text">SHREE KRISHNA JANMASHTAMI PUJA SAMITI<small>Bhadir, Muhammadabad Gohana, Mau (U.P.)</small></div>
     </div></div>
+    <div class="receipt-title">DONATION RECEIPT</div>
     <div class="receipt-meta-row">
       <span><strong>Receipt No.</strong> ${escapeHtml(data.receiptNumber)}</span>
       <span><strong>Donation Date</strong> ${escapeHtml(data.donationDate)}</span>
     </div>
+    <div class="rc-main">
+      <div class="rc-photo"><img src="${escapeHtml(photo)}" alt="Donor" /><span class="vb">✔ VERIFIED</span></div>
+      <div class="rc-f">
+        <div class="field-row"><span class="label">Donor Name</span><span class="value">${escapeHtml(data.fullName)}</span></div>
+        <div class="field-row"><span class="label">Mobile Number</span><span class="value">${escapeHtml(data.mobile)}</span></div>
+        <div class="field-row"><span class="label">Address</span><span class="value">${escapeHtml(data.address)}</span></div>
+        <div class="field-row"><span class="label">UTR Number</span><span class="value">${escapeHtml(data.upiReference)}</span></div>
+      </div>
+    </div>
     <div class="receipt-body">
-      <div class="field-row"><span class="label">Donor Name</span><span class="value">${escapeHtml(data.fullName)}</span></div>
-      <div class="field-row"><span class="label">Mobile Number</span><span class="value">${escapeHtml(data.mobile)}</span></div>
-      <div class="field-row"><span class="label">Address</span><span class="value">${escapeHtml(data.address)}</span></div>
       <div class="field-row field-row-amount"><span class="label">Donation Amount</span><span class="value">₹ ${amount.toLocaleString('en-IN')}</span></div>
       <div class="field-row field-row-words"><span class="label">Amount in Words</span><span class="value">${numberToWords(amount)}</span></div>
-      <div class="field-row"><span class="label">UPI Reference No.</span><span class="value">${escapeHtml(data.upiReference)}</span></div>
     </div>
     <div class="receipt-thankyou">🙏 Thank you for your valuable contribution to<br />Shree Krishna Janmashtami Puja Samiti.</div>
     <div class="receipt-signature">
@@ -551,7 +595,7 @@ $('verifyBtn').addEventListener('click', async function () {
     const p = pSnap.exists ? pSnap.data() : {};
     const date = d.createdAt && d.createdAt.toDate ? formatDate(d.createdAt.toDate()) : formatDate(new Date());
     _verifiedData = {
-      fullName: d.fullName, mobile: p.mobile || '-', address: p.address || '-', amount: d.amount,
+      fullName: d.fullName, photo: d.photo || '', mobile: p.mobile || '-', address: p.address || '-', amount: d.amount,
       upiReference: ref, donationDate: date,
       receiptNumber: d.receiptNumber || ('SKJPS-' + id.slice(0, 8).toUpperCase())
     };
@@ -580,6 +624,11 @@ verifyInput.addEventListener('keydown', e => { if (e.key === 'Enter') $('verifyB
 /* ═══ FORM SUBMIT ═══ */
 const form = $('donationForm'), submitBtn = $('submitBtn'), successMsg = $('formSuccessMsg'), errorMsg = $('formErrorMsg');
 const addressInput = $('addressInput'), noteInput = $('noteInput');
+function resetForm() {
+  form.reset(); clearPhoto();
+  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+  form.querySelectorAll('input,textarea').forEach(i => { i.style.borderColor = ''; i.style.boxShadow = ''; });
+}
 
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -623,10 +672,11 @@ form.addEventListener('submit', async function (e) {
       })
     }).catch(() => {});
 
-    successMsg.textContent = '✅ आपका दान दर्ज हो गया और सूची में दिख रहा है (⏳ Pending)। Verify होने के बाद "Verify Donation" में अपना UTR डालकर Receipt Download करें।';
+    resetForm();
+    highlightId = id; renderDonorList();
+    successMsg.innerHTML = '<b>✅ आपका दान सफलतापूर्वक दर्ज हो गया!</b>आपका नाम सूची में दिख रहा है (⏳ Pending)। Verify होने के बाद "Verify Donation" में अपना UTR डालकर Receipt Download करें।';
     successMsg.style.display = 'block';
     successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    form.reset(); clearPhoto(); renderDonorList(id);
   } catch (err) {
     console.error('Submission error:', err);
     errorMsg.textContent =
@@ -648,8 +698,8 @@ $('downloadPdfBtn').addEventListener('click', function () {
   setTimeout(() => {
     const clone = $('receiptContent').cloneNode(true);
     const st = {
-      'width': '794px', 'height': '1123px', 'min-width': '794px', 'min-height': '1123px', 'max-width': '794px',
-      'padding': '38px 45px', 'margin': '0', 'box-shadow': 'none', 'background': '#fff',
+      'width': '560px', 'min-width': '560px', 'max-width': '560px', 'height': 'auto', 'min-height': '0',
+      'padding': '28px 34px', 'margin': '0', 'box-shadow': 'none', 'background': '#fff', 'border-radius': '0',
       'border': '1.5px solid #d4a017', 'font-size': '12px', 'display': 'block', 'box-sizing': 'border-box',
       'position': 'absolute', 'left': '0', 'top': '0'
     };
@@ -657,13 +707,14 @@ $('downloadPdfBtn').addEventListener('click', function () {
     clone.id = 'cloneForPdf';
     document.body.appendChild(clone);
     setTimeout(() => {
-      html2canvas(clone, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#fff', logging: false,
-        width: 794, height: 1123, windowWidth: 794, windowHeight: 1123 })
+      html2canvas(clone, { scale: 2.5, useCORS: true, allowTaint: true, backgroundColor: '#fff', logging: false,
+        width: 560, windowWidth: 1000, scrollX: 0, scrollY: 0 })
         .then(canvas => {
           document.body.removeChild(clone);
           const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
-          pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+          const w = 150, h = +(w * canvas.height / canvas.width).toFixed(2);
+          const pdf = new jsPDF({ orientation: h >= w ? 'portrait' : 'landscape', unit: 'mm', format: [w, h], compress: true });
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, w, h);
           pdf.save('Donation_Receipt.pdf'); done();
         })
         .catch(err => {
